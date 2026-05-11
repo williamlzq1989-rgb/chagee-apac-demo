@@ -453,8 +453,8 @@
       <div class="ops-kpi-card">
         <div class="ops-title">
           <span class="ops-icon" style="background:var(--orange-bg);color:var(--orange);">👥</span>
-          <span>排班与人力</span>
-          <span class="ops-badge" id="staffingBadge" style="background:var(--green-bg);color:var(--green);">达标</span>
+          <span data-i18n="kpi_scheduling">排班与人力</span>
+          <span class="ops-badge" id="staffingBadge" style="background:var(--green-bg);color:var(--green);" data-i18n="staff_badge_ok">达标</span>
         </div>
         <div id="staffingLaborPanel"></div>
       </div>
@@ -932,6 +932,14 @@ const I18N = {
     strat_3_d: '当前 62% 的工单为"产品咨询"和"订单查询"类重复问题。建议上线AI自动应答，将人工处理量从日均 180 单降至 70 单。',
     strat_4_t: 'NPS 低迷门店定向提升', strat_4_i: '目标: NPS +5',
     strat_4_d: 'Suntec City 服务评分持续走低（3.2→3.0），主因"等待时间"和"饮品一致性"。建议安排专项培训 + 出杯流程优化。',
+    // staffing & labor
+    staff_schedule_adherence: '排班达标率',
+    staff_vs_prev_15d: 'vs 近15天',
+    staff_hours_worked: '实际工时',
+    staff_budget: '预算',
+    staff_view_schedule: '查看排班 →',
+    staff_badge_ok: '达标',
+    staff_badge_watch: '关注',
     // overview insights
     oi1_t: 'Orchard ION 门店损耗率突增至 4.2%', oi1_d: '近7天平均损耗 2.1%，本周突然升至 4.2%。主要贡献品类：鲜奶（+180%）、茶叶包（+95%），疑似操作流程变更或库存管理异常。',
     oi1_a: '立即安排区域督导现场检查该门店备料流程，同时对比本周排班变更记录。',
@@ -1049,6 +1057,14 @@ const I18N = {
     strat_3_d: '62% of tickets are repetitive "product inquiry" and "order query" types. Deploy AI auto-response to reduce manual processing from 180 to 70 tickets/day.',
     strat_4_t: 'Targeted NPS Improvement for Low-Performing Stores', strat_4_i: 'Target: NPS +5',
     strat_4_d: 'Suntec City service scores declining (3.2→3.0), driven by "wait time" and "drink consistency". Recommend targeted training + workflow optimization.',
+    // staffing & labor
+    staff_schedule_adherence: 'Schedule Adherence',
+    staff_vs_prev_15d: 'vs Prev 15 Days',
+    staff_hours_worked: 'Hours Worked',
+    staff_budget: 'Budget',
+    staff_view_schedule: 'View Schedule →',
+    staff_badge_ok: 'Healthy',
+    staff_badge_watch: 'Watch',
     oi1_t: 'Orchard ION waste rate spiked to 4.2%', oi1_d: '7-day avg was 2.1%, suddenly rose to 4.2% this week. Main contributors: fresh milk (+180%), tea packs (+95%), likely due to process changes or inventory issues.',
     oi1_a: 'Immediately dispatch regional supervisor for on-site prep process review, cross-check weekly schedule changes.',
     oi2_t: 'VivoCity may be understaffed this weekend', oi2_d: 'Based on historical traffic patterns (holiday + weekend GMV +35%) and current scheduling, estimated staffing gap of 2 during Saturday peak (12:00-15:00).',
@@ -1823,39 +1839,60 @@ function renderStaffingLabor() {
   var el = document.getElementById('staffingLaborPanel');
   if(!el) return;
 
-  var hcActual = randInt(rng, 8, 18);
-  var hcTarget = randInt(rng, 10, 20);
-  var hcPct = Math.round(hcActual / hcTarget * 100);
+  // --- Primary KPI: Schedule Adherence ---
+  var adherence = randInt(rng, 78, 96);
+  var prevAdherence = adherence - randInt(rng, 0, 12);
+  var delta = adherence - prevAdherence;
+  var deltaColor = delta >= 0 ? '#22C55E' : '#EF4444';
+  var deltaArrow = delta >= 0 ? '▲' : '▼';
 
-  var otHrs = +(Math.random()*12+1).toFixed(1);
-  var otBudget = +(Math.random()*15+8).toFixed(1);
-  var otPct = Math.round(otHrs / otBudget * 100);
+  // --- Secondary KPI: Hours Worked ---
+  var hrsActual = randInt(rng, 580, 820);
+  var hrsBudget = randInt(rng, 700, 900);
+  var hrsPct = Math.round(hrsActual / hrsBudget * 100);
 
+  // --- Badge ---
   var badge = document.getElementById('staffingBadge');
   if(badge) {
-    var overall = hcPct >= 95 && otPct <= 100;
-    badge.textContent = overall ? '达标' : '关注';
-    badge.style.background = overall ? 'var(--green-bg)' : 'var(--yellow-bg)';
-    badge.style.color = overall ? 'var(--green)' : 'var(--yellow)';
+    var isOk = adherence >= 85;
+    badge.textContent = isOk ? t('staff_badge_ok') : t('staff_badge_watch');
+    badge.style.background = isOk ? 'var(--green-bg)' : 'var(--yellow-bg)';
+    badge.style.color = isOk ? 'var(--green)' : 'var(--yellow)';
   }
 
-  var rows = [
-    { label:'排班人数', val:hcActual+' / '+hcTarget, pct:hcPct, color: hcPct>=95?'#22C55E':hcPct>=80?'#EAB308':'#EF4444' },
-    { label:'加班工时', val:otHrs+'h / '+otBudget+'h', pct:Math.min(otPct,100), color: otPct<=80?'#22C55E':otPct<=100?'#EAB308':'#EF4444' },
-    { label:'排班达标率', val:randInt(rng,82,98)+'%', pct:randInt(rng,82,98), color:'#22C55E' },
-    { label:'人力成本', val:(Math.random()*8+22).toFixed(1)+'%', pct:randInt(rng,60,95), color:'#22C55E' }
-  ];
-
-  el.innerHTML = rows.map(function(r){
-    return '<div style="margin-bottom:10px;">' +
-      '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
-        '<span style="font-size:12px;color:var(--text-secondary);">'+r.label+'</span>' +
-        '<span style="font-size:12px;font-weight:600;">'+r.val+'</span>' +
+  el.innerHTML =
+    // Primary: Schedule Adherence
+    '<div style="margin-bottom:16px;">' +
+      '<div class="progress-row">' +
+        '<span class="progress-label">' + t('staff_schedule_adherence') + '</span>' +
+        '<span class="progress-value" style="font-size:22px;color:' + (adherence >= 85 ? '#22C55E' : '#EAB308') + ';">' + adherence + '<span style="font-size:13px;font-weight:400;">%</span></span>' +
       '</div>' +
-      '<div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden;">' +
-        '<div style="height:100%;width:'+Math.min(r.pct,100)+'%;background:'+r.color+';border-radius:3px;"></div>' +
-      '</div></div>';
-  }).join('');
+      '<div class="progress-bar-track" style="height:8px;">' +
+        '<div class="progress-fill" style="width:' + adherence + '%;background:linear-gradient(90deg,' + (adherence >= 85 ? '#22C55E,#4ADE80' : '#EAB308,#FACC15') + ');border-radius:4px;"></div>' +
+      '</div>' +
+      '<div class="progress-meta">' +
+        '<span>' + deltaArrow + ' ' + Math.abs(delta) + 'pp ' + t('staff_vs_prev_15d') + '</span>' +
+        '<span class="meta-current" style="color:' + deltaColor + ';">' + deltaArrow + ' ' + Math.abs(delta) + 'pp</span>' +
+      '</div>' +
+    '</div>' +
+    // Secondary: Hours Worked
+    '<div style="margin-bottom:14px;">' +
+      '<div class="progress-row">' +
+        '<span class="progress-label">' + t('staff_hours_worked') + '</span>' +
+        '<span class="progress-value" style="font-size:14px;color:#60A5FA;">' + hrsActual.toLocaleString() + ' / ' + hrsBudget.toLocaleString() + '</span>' +
+      '</div>' +
+      '<div class="progress-bar-track" style="height:6px;">' +
+        '<div class="progress-fill" style="width:' + Math.min(hrsPct, 100) + '%;background:linear-gradient(90deg,#3B82F6,#60A5FA);border-radius:3px;"></div>' +
+      '</div>' +
+      '<div class="progress-meta">' +
+        '<span>' + t('staff_budget') + ': <strong>' + hrsBudget.toLocaleString() + 'h</strong></span>' +
+        '<span class="meta-current" style="color:' + (hrsPct <= 100 ? '#22C55E' : '#EF4444') + ';">' + hrsPct + '% used</span>' +
+      '</div>' +
+    '</div>' +
+    // View Schedule link
+    '<div style="margin-top:4px;text-align:right;">' +
+      '<span style="font-size:12px;font-weight:500;cursor:pointer;color:var(--primary);transition:opacity .2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">' + t('staff_view_schedule') + '</span>' +
+    '</div>';
 }
 
 // ===== OVERVIEW FAST MOVERS (TOP 8) =====
