@@ -1512,16 +1512,15 @@ function renderStoreRankings() {
     ? [currentFilter.store.replace(/\s*\).*\)/,'')]
     : REGIONS[currentFilter.region].stores.slice(0,8).map(function(s){return s.replace(/\s*\(.*\)/,'');});
 
-  // Sort ascending: Chart.js horizontal bar renders y-axis bottom-to-top,
-  // so smallest value at bottom, largest (#1) at top
+  // Sort descending: first element in labels array = top row in chart
   var gmvPairs = storeList.map(function(s){return {store:s, value:Math.round(jitter(28000,0.4,rng))};});
-  gmvPairs.sort(function(a,b){return a.value-b.value;});
+  gmvPairs.sort(function(a,b){return b.value-a.value;});
 
   var orderPairs = storeList.map(function(s){return {store:s, value:randInt(rng,800,3500)};});
-  orderPairs.sort(function(a,b){return a.value-b.value;});
+  orderPairs.sort(function(a,b){return b.value-a.value;});
 
   var npsPairs = storeList.map(function(s){return {store:s, value:randInt(rng,55,88)};});
-  npsPairs.sort(function(a,b){return a.value-b.value;});
+  npsPairs.sort(function(a,b){return b.value-a.value;});
 
   var gmvLabels = gmvPairs.map(function(p){return p.store;});
   var gmvData = gmvPairs.map(function(p){return p.value;});
