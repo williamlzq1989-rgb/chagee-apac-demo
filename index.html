@@ -1512,15 +1512,16 @@ function renderStoreRankings() {
     ? [currentFilter.store.replace(/\s*\).*\)/,'')]
     : REGIONS[currentFilter.region].stores.slice(0,8).map(function(s){return s.replace(/\s*\(.*\)/,'');});
 
-  // Sort descending so #1 is first, then reverse y-axis to put #1 at top
+  // Sort ascending: Chart.js horizontal bar renders y-axis bottom-to-top,
+  // so smallest value at bottom, largest (#1) at top
   var gmvPairs = storeList.map(function(s){return {store:s, value:Math.round(jitter(28000,0.4,rng))};});
-  gmvPairs.sort(function(a,b){return b.value-a.value;});
+  gmvPairs.sort(function(a,b){return a.value-b.value;});
 
   var orderPairs = storeList.map(function(s){return {store:s, value:randInt(rng,800,3500)};});
-  orderPairs.sort(function(a,b){return b.value-a.value;});
+  orderPairs.sort(function(a,b){return a.value-b.value;});
 
   var npsPairs = storeList.map(function(s){return {store:s, value:randInt(rng,55,88)};});
-  npsPairs.sort(function(a,b){return b.value-a.value;});
+  npsPairs.sort(function(a,b){return a.value-b.value;});
 
   var gmvLabels = gmvPairs.map(function(p){return p.store;});
   var gmvData = gmvPairs.map(function(p){return p.value;});
@@ -1573,7 +1574,6 @@ function renderStoreRankings() {
             ticks: { color: '#8B8FA3', font: { size: 10 }, callback: function(v){ return 'S$'+(v/1000).toFixed(0)+'K'; } }
           },
           y: {
-            reverse: true,
             grid: { display: false },
             border: { display: false },
             ticks: { color: '#C9CDD4', font: { size: 11 } }
@@ -1622,7 +1622,6 @@ function renderStoreRankings() {
             ticks: { color: '#8B8FA3', font: { size: 10 }, callback: function(v){ return v.toLocaleString(); } }
           },
           y: {
-            reverse: true,
             grid: { display: false },
             border: { display: false },
             ticks: { color: '#C9CDD4', font: { size: 11 } }
@@ -1672,7 +1671,6 @@ function renderStoreRankings() {
             ticks: { color: '#8B8FA3', font: { size: 10 } }
           },
           y: {
-            reverse: true,
             grid: { display: false },
             border: { display: false },
             ticks: { color: '#C9CDD4', font: { size: 11 } }
