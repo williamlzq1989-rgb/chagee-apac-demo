@@ -1505,34 +1505,54 @@ function updateInvHealthRing(rng) {
   `).join('');
 }
 
-// ===== STORE RANKING CHARTS =====
+// ===== STORE RANKING CHARTS (HORIZONTAL BAR) =====
 function renderStoreRankings() {
-  const rng = seededRandom(getFilterSeed()+'storeRank');
-  const storeList = currentFilter.store !== 'all'
-    ? [currentFilter.store.replace(/\s*\(.*\)/,'')]
-    : REGIONS[currentFilter.region].stores.slice(0,8).map(s=>s.replace(/\s*\(.*\)/,''));
+  var rng = seededRandom(getFilterSeed()+'storeRank');
+  var storeList = currentFilter.store !== 'all'
+    ? [currentFilter.store.replace(/\s*\).*\)/,'')]
+    : REGIONS[currentFilter.region].stores.slice(0,8).map(function(s){return s.replace(/\s*\(.*\)/,'');});
 
-  const makeChart = (canvasId, pairs, colorFn, xOpts, yOpts) => {
-    if(allCharts[canvasId]) allCharts[canvasId].destroy();
-    pairs.sort((a,b)=>b.value-a.value);
-    const ctx = document.getElementById(canvasId).getContext('2d');
-    allCharts[canvasId] = new Chart(ctx, {
+  // Sort ascending so #1 appears at top when Chart.js renders y-axis top-to-bottom
+  var gmvPairs = storeList.map(function(s){return {store:s, value:Math.round(jitter(28000,0.4,rng))};});
+  gmvPairs.sort(function(a,b){return a.value-b.value;});
+
+  var orderPairs = storeList.map(function(s){return {store:s, value:randInt(rng,800,3500)};});
+  orderPairs.sort(function(a,b){return a.value-b.value;});
+
+  var npsPairs = storeList.map(function(s){return {store:s, value:randInt(rng,55,88)};});
+  npsPairs.sort(function(a,b){return a.value-b.value;});
+
+  var gmvLabels = gmvPairs.map(function(p){return p.store;});
+  var gmvData = gmvPairs.map(function(p){return p.value;});
+  var gmvColors = gmvData.map(function(v){return v>=32000?'rgba(212,168,85,0.9)':v>=24000?'rgba(212,168,85,0.6)':'rgba(212,168,85,0.35)';});
+
+  var orderLabels = orderPairs.map(function(p){return p.store;});
+  var orderData = orderPairs.map(function(p){return p.value;});
+  var orderColors = orderData.map(function(v){return v>=2500?'rgba(59,130,246,0.85)':v>=1500?'rgba(59,130,246,0.55)':'rgba(59,130,246,0.3)';});
+
+  var npsLabels = npsPairs.map(function(p){return p.store;});
+  var npsData = npsPairs.map(function(p){return p.value;});
+  var npsColors = npsData.map(function(v){return v>=75?'rgba(34,197,94,0.8)':v>=65?'rgba(234,179,8,0.75)':'rgba(239,68,68,0.75)';});
+
+  // -- GMV Ranking --
+  if(allCharts.chartStoreGmvRank) allCharts.chartStoreGmvRank.destroy();
+  allCharts.chartStoreGmvRank = new Chart(
+    document.getElementById('chartStoreGmvRank'),
+    {
       type: 'bar',
-      indexAxis: 'y',
       data: {
-        labels: pairs.map(p => p.store),
+        labels: gmvLabels,
         datasets: [{
-          data: pairs.map(p => p.value),
-          backgroundColor: pairs.map(p => colorFn(p.value)),
+          data: gmvData,
+          backgroundColor: gmvColors,
           borderRadius: 4,
-          barThickness: 22,
-          borderSkipped: false
+          barThickness: 22
         }]
       },
       options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 4 } },
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -1547,45 +1567,117 @@ function renderStoreRankings() {
         },
         scales: {
           x: {
-            grid: { color: 'rgba(42,46,58,0.3)', drawBorder: false },
+            beginAtZero: true,
+            grid: { color: 'rgba(42,46,58,0.3)' },
             border: { display: false },
-            ticks: { color: '#8B8FA3', font: { size: 10 }, ...xOpts },
-            beginAtZero: true
+            ticks: { color: '#8B8FA3', font: { size: 10 }, callback: function(v){ return 'S$'+(v/1000).toFixed(0)+'K'; } }
           },
           y: {
-            grid: { display: false, drawBorder: false },
+            grid: { display: false },
             border: { display: false },
-            ticks: {
-              color: '#C9CDD4',
-              font: { size: 11, family: '-apple-system, BlinkMacSystemFont, sans-serif' },
-              padding: 4,
-              crossAlign: 'far',
-              ...yOpts
-            }
+            ticks: { color: '#C9CDD4', font: { size: 11 } }
           }
         }
       }
-    });
-  };
+    }
+  );
 
-  // GMV Ranking - gold gradient colors
-  let gmvPairs = storeList.map(s => ({store:s, value:Math.round(jitter(28000,0.4,rng))}));
-  makeChart('chartStoreGmvRank', gmvPairs,
-    v => v>=32000 ? 'rgba(212,168,85,0.9)' : v>=24000 ? 'rgba(212,168,85,0.6)' : 'rgba(212,168,85,0.35)',
-    { callback: v => 'S$' + (v/1000).toFixed(0) + 'K' });
+  // -- Order Ranking --
+  if(allCharts.chartStoreOrderRank) allCharts.chartStoreOrderRank.destroy();
+  allCharts.chartStoreOrderRank = new Chart(
+    document.getElementById('chartStoreOrderRank'),
+    {
+      type: 'bar',
+      data: {
+        labels: orderLabels,
+        datasets: [{
+          data: orderData,
+          backgroundColor: orderColors,
+          borderRadius: 4,
+          barThickness: 22
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(26,29,39,0.95)',
+            titleColor: '#E8E8ED',
+            bodyColor: '#C9CDD4',
+            borderColor: 'rgba(42,46,58,0.8)',
+            borderWidth: 1,
+            cornerRadius: 8,
+            padding: 10
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            grid: { color: 'rgba(42,46,58,0.3)' },
+            border: { display: false },
+            ticks: { color: '#8B8FA3', font: { size: 10 }, callback: function(v){ return v.toLocaleString(); } }
+          },
+          y: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: { color: '#C9CDD4', font: { size: 11 } }
+          }
+        }
+      }
+    }
+  );
 
-  // Order Ranking - blue colors
-  let orderPairs = storeList.map(s => ({store:s, value:randInt(rng,800,3500)}));
-  makeChart('chartStoreOrderRank', orderPairs,
-    v => v>=2500 ? 'rgba(59,130,246,0.85)' : v>=1500 ? 'rgba(59,130,246,0.55)' : 'rgba(59,130,246,0.3)',
-    { callback: v => v.toLocaleString() });
-
-  // NPS Ranking - green/yellow/red by value
-  let npsPairs = storeList.map(s => ({store:s, value:randInt(rng,55,88)}));
-  makeChart('chartStoreNpsRank', npsPairs,
-    v => v>=75 ? 'rgba(34,197,94,0.8)' : v>=65 ? 'rgba(234,179,8,0.75)' : 'rgba(239,68,68,0.75)',
-    {},
-    { callback: v => v + '分' });
+  // -- NPS Ranking --
+  if(allCharts.chartStoreNpsRank) allCharts.chartStoreNpsRank.destroy();
+  allCharts.chartStoreNpsRank = new Chart(
+    document.getElementById('chartStoreNpsRank'),
+    {
+      type: 'bar',
+      data: {
+        labels: npsLabels,
+        datasets: [{
+          data: npsData,
+          backgroundColor: npsColors,
+          borderRadius: 4,
+          barThickness: 22
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(26,29,39,0.95)',
+            titleColor: '#E8E8ED',
+            bodyColor: '#C9CDD4',
+            borderColor: 'rgba(42,46,58,0.8)',
+            borderWidth: 1,
+            cornerRadius: 8,
+            padding: 10
+          }
+        },
+        scales: {
+          x: {
+            min: 40,
+            max: 100,
+            grid: { color: 'rgba(42,46,58,0.3)' },
+            border: { display: false },
+            ticks: { color: '#8B8FA3', font: { size: 10 } }
+          },
+          y: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: { color: '#C9CDD4', font: { size: 11 } }
+          }
+        }
+      }
+    }
+  );
 }
 
 function refreshAllData() { updateKPIs(); updateOverviewCharts(); renderTopBeverage(); renderInvHealth(); renderFastMovers(); renderAIBottom(); renderStoreRankings(); }
