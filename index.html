@@ -497,25 +497,16 @@
       </div>
     </div>
 
-    <!-- Top Beverage + Inventory Health -->
-    <div class="dash-grid" style="margin-top:16px;">
+    <!-- Top Beverage (full width) -->
+    <div style="margin-top:16px;">
       <div class="card">
         <div class="card-header">
           <div><div class="card-title" data-i18n="chart_top_bev_title">Top Beverage 排行</div><div class="card-subtitle" data-i18n="chart_top_bev_sub">今日销量 Top 8 饮品</div></div>
           <span class="card-badge green" data-i18n="badge_healthy">健康</span>
         </div>
-        <div id="topBeverageList" class="bev-list"></div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title" data-i18n="chart_inv_health_title">库存健康度</div><div class="card-subtitle" data-i18n="chart_inv_health_sub">各品类库存状态一览</div></div>
-          <span class="card-badge yellow" data-i18n="badge_watch">关注</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:24px;">
-          <div class="health-donut-wrap"><canvas id="chartInvHealth"></canvas>
-            <div class="health-donut-center"><div class="pct" id="invHealthPct">78%</div><div class="label" data-i18n="inv_in_stock">In Stock</div></div>
-          </div>
-          <div class="health-legend" style="flex:1;" id="invHealthLegend"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div id="topBeverageList" class="bev-list"></div>
+          <div id="staffingLaborPanel"></div>
         </div>
       </div>
     </div>
@@ -1683,7 +1674,7 @@ function renderStoreRankings() {
   );
 }
 
-function refreshAllData() { updateKPIs(); updateOverviewCharts(); renderTopBeverage(); renderInvHealth(); renderFastMovers(); renderAIBottom(); renderStoreRankings(); }
+function refreshAllData() { updateKPIs(); updateOverviewCharts(); renderTopBeverage(); renderStaffingLabor(); renderFastMovers(); renderAIBottom(); renderStoreRankings(); }
 
 // ===== PAGE NAVIGATION =====
 function switchPage(page) {
@@ -1812,30 +1803,60 @@ function renderTopBeverage() {
   el.innerHTML = html;
 }
 
-// ===== INVENTORY HEALTH =====
-function renderInvHealth() {
-  const rng = seededRandom(getFilterSeed()+'invHealth');
-  const inStock = randInt(rng,120,180);
-  const lowStock = randInt(rng,15,35);
-  const outStock = randInt(rng,3,12);
-  const total = inStock + lowStock + outStock;
-  const pct = Math.round(inStock/total*100);
+// ===== STAFFING & LABOR =====
+function renderStaffingLabor() {
+  var rng = seededRandom(getFilterSeed()+'staffLabor');
+  var el = document.getElementById('staffingLaborPanel');
+  if(!el) return;
 
-  document.getElementById('invHealthPct').textContent = pct + '%';
+  var hcActual = randInt(rng, 8, 18);
+  var hcTarget = randInt(rng, 10, 20);
+  var hcPct = Math.round(hcActual / hcTarget * 100);
+  var hcColor = hcPct >= 95 ? 'var(--green)' : hcPct >= 80 ? 'var(--yellow)' : 'var(--red)';
+  var hcBg = hcPct >= 95 ? 'var(--green-bg)' : hcPct >= 80 ? 'var(--yellow-bg)' : 'var(--red-bg)';
+  var hcLabel = hcPct >= 95 ? (currentLang==='zh'?'达标':'On Target') : hcPct >= 80 ? (currentLang==='zh'?'不足':'Under') : (currentLang==='zh'?'缺人':'Critical');
 
-  if(allCharts.chartInvHealth) allCharts.chartInvHealth.destroy();
-  allCharts.chartInvHealth = new Chart(document.getElementById('chartInvHealth'), {
-    type:'doughnut',
-    data:{ labels:[t('inv_in_stock'),t('inv_low_stock'),t('inv_out_stock')], datasets:[{data:[inStock,lowStock,outStock],backgroundColor:['#22C55E','#EAB308','#EF4444'],borderWidth:0}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:true}}}
-  });
+  var otHrs = (Math.random()*12+1).toFixed(1);
+  var otBudget = (Math.random()*15+8).toFixed(1);
+  var otPct = Math.round(parseFloat(otHrs)/parseFloat(otBudget)*100);
+  var otColor = otPct <= 80 ? 'var(--green)' : otPct <= 100 ? 'var(--yellow)' : 'var(--red)';
+  var otLabel = otPct <= 80 ? (currentLang==='zh'?'健康':'Healthy') : otPct <= 100 ? (currentLang==='zh'?'关注':'Watch') : (currentLang==='zh'?'超标':'Over');
 
-  const legend = document.getElementById('invHealthLegend');
-  legend.innerHTML = `
-    <div class="health-legend-item"><div class="health-legend-dot green"></div><span>${t('inv_in_stock')}</span><span class="health-legend-count">${inStock} SKUs</span></div>
-    <div class="health-legend-item"><div class="health-legend-dot yellow"></div><span>${t('inv_low_stock')}</span><span class="health-legend-count">${lowStock} SKUs</span></div>
-    <div class="health-legend-item"><div class="health-legend-dot red"></div><span>${t('inv_out_stock')}</span><span class="health-legend-count">${outStock} SKUs</span></div>
-  `;
+  var scheduleAdherence = randInt(rng, 82, 98);
+  var saColor = scheduleAdherence >= 90 ? 'var(--green)' : scheduleAdherence >= 80 ? 'var(--yellow)' : 'var(--red)';
+  var saLabel = scheduleAdherence >= 90 ? (currentLang==='zh'?'良好':'Good') : scheduleAdherence >= 80 ? (currentLang==='zh'?'一般':'Fair') : (currentLang==='zh'?'差':'Poor');
+
+  var laborCostPct = (Math.random()*8+22).toFixed(1);
+  var laborCostBudget = (Math.random()*5+28).toFixed(1);
+  var lcColor = parseFloat(laborCostPct) <= parseFloat(laborCostBudget) ? 'var(--green)' : 'var(--red)';
+  var lcLabel = parseFloat(laborCostPct) <= parseFloat(laborCostBudget) ? (currentLang==='zh'?'达标':'On Target') : (currentLang==='zh'?'超标':'Over');
+
+  var metrics = [
+    { label: currentLang==='zh'?'排班人数':'Headcount', value: hcActual+' / '+hcTarget, pct: hcPct, color: hcColor, bg: hcBg, badge: hcLabel },
+    { label: currentLang==='zh'?'加班工时':'Overtime Hrs', value: otHrs+' / '+otBudget+'h', pct: otPct, color: otColor, bg: otBg, badge: otLabel },
+    { label: currentLang==='zh'?'排班达标率':'Schedule Adherence', value: scheduleAdherence+'%', pct: scheduleAdherence, color: saColor, bg: saColor.replace('var(--','var(--').replace(')','')=='var(--green)'?'var(--green-bg)':saColor==='var(--yellow)'?'var(--yellow-bg)':'var(--red-bg)', badge: saLabel },
+    { label: currentLang==='zh'?'人力成本占比':'Labor Cost %', value: laborCostPct+'% / '+laborCostBudget+'%', pct: Math.round(parseFloat(laborCostPct)/parseFloat(laborCostBudget)*100), color: lcColor, bg: parseFloat(laborCostPct)<=parseFloat(laborCostBudget)?'var(--green-bg)':'var(--red-bg)', badge: lcLabel }
+  ];
+
+  var title = currentLang==='zh'?'排班与人力':'Staffing & Labor';
+  var sub = currentLang==='zh'?'人力配置与成本监控':'Headcount & cost monitoring';
+  el.innerHTML = '<div style="margin-bottom:14px;"><div style="font-size:14px;font-weight:600;margin-bottom:2px;">'+title+'</div><div style="font-size:11px;color:var(--text-dim);">'+sub+'</div></div>' +
+    metrics.map(function(m){
+      var bgVal = m.bg.replace('var(--green-bg)','rgba(34,197,94,0.12)').replace('var(--yellow-bg)','rgba(234,179,8,0.12)').replace('var(--red-bg)','rgba(239,68,68,0.12)');
+      var colorVal = m.color.replace('var(--green)','#22C55E').replace('var(--yellow)','#EAB308').replace('var(--red)','#EF4444');
+      return '<div style="margin-bottom:14px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+          '<span style="font-size:12px;color:var(--text-secondary);">'+m.label+'</span>' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<span style="font-size:13px;font-weight:600;">'+m.value+'</span>' +
+            '<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:'+bgVal+';color:'+colorVal+';">'+m.badge+'</span>' +
+          '</div>' +
+        '</div>' +
+        '<div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;">' +
+          '<div style="height:100%;width:'+Math.min(m.pct,100)+'%;background:'+colorVal+';border-radius:4px;transition:width 0.8s ease;"></div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
 }
 
 // ===== FAST MOVERS TABLE =====
