@@ -51,71 +51,6 @@
 
   /* === FILTER BAR === */
   .filter-bar { display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; padding:12px 16px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); }
-
-  /* === DATE TABS === */
-  .date-tabs { display:flex; gap:4px; margin-bottom:16px; background:var(--bg-card); padding:4px; border-radius:var(--radius); width:fit-content; }
-  .date-tab { padding:8px 20px; border-radius:8px; font-size:13px; font-weight:500; color:var(--text-secondary); cursor:pointer; transition:all 0.2s; border:none; background:none; }
-  .date-tab:hover { color:var(--text); }
-  .date-tab.active { color:var(--primary); background:rgba(212,168,85,0.1); }
-
-  /* === ALERT BANNER === */
-  .alert-banner { display:flex; align-items:center; gap:12px; padding:14px 18px; background:var(--red-bg); border:1px solid rgba(239,68,68,0.2); border-radius:var(--radius); margin-bottom:20px; }
-  .alert-banner .alert-icon { width:32px; height:32px; border-radius:50%; background:var(--red); display:flex; align-items:center; justify-content:center; font-size:16px; color:#fff; }
-  .alert-banner .alert-content { flex:1; }
-  .alert-banner .alert-title { font-size:14px; font-weight:600; color:var(--red); margin-bottom:2px; }
-  .alert-banner .alert-desc { font-size:12px; color:var(--text-secondary); }
-  .alert-banner .alert-action { padding:6px 14px; background:var(--red); color:#fff; border-radius:6px; font-size:12px; font-weight:500; cursor:pointer; }
-
-  /* === TOP BEVERAGE LIST === */
-  .bev-list { display:flex; flex-direction:column; gap:10px; }
-  .bev-item { display:flex; align-items:center; gap:12px; padding:10px; background:var(--bg-card-hover); border-radius:var(--radius-sm); }
-  .bev-rank { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; background:var(--primary); color:#000; }
-  .bev-rank.top3 { background:var(--primary); }
-  .bev-rank.other { background:var(--border); color:var(--text-secondary); }
-  .bev-info { flex:1; }
-  .bev-name { font-size:13px; font-weight:500; margin-bottom:2px; }
-  .bev-sales { font-size:12px; color:var(--text-dim); }
-  .bev-pct { font-size:14px; font-weight:600; color:var(--green); }
-
-  /* === INVENTORY FAST MOVERS TABLE === */
-  .fast-movers-table { width:100%; border-collapse:collapse; font-size:12px; }
-  .fast-movers-table th { text-align:left; padding:8px 10px; color:var(--text-secondary); font-weight:500; font-size:11px; border-bottom:1px solid var(--border); }
-  .fast-movers-table td { padding:10px; border-bottom:1px solid rgba(42,46,58,0.5); }
-  .fast-movers-table tr:hover td { background:var(--bg-card-hover); }
-  .stock-days { padding:3px 8px; border-radius:4px; font-size:11px; font-weight:600; }
-  .stock-days.critical { background:var(--red-bg); color:var(--red); }
-  .stock-days.warning { background:var(--yellow-bg); color:var(--yellow); }
-  .stock-days.good { background:var(--green-bg); color:var(--green); }
-
-  /* === INVENTORY HEALTH DONUT === */
-  .health-donut-wrap { position:relative; width:140px; height:140px; margin:0 auto; }
-  .health-donut-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
-  .health-donut-center .pct { font-size:28px; font-weight:700; color:var(--green); }
-  .health-donut-center .label { font-size:11px; color:var(--text-secondary); }
-  .health-legend { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
-  .health-legend-item { display:flex; align-items:center; gap:8px; font-size:12px; }
-  .health-legend-dot { width:8px; height:8px; border-radius:50%; }
-  .health-legend-dot.green { background:var(--green); }
-  .health-legend-dot.yellow { background:var(--yellow); }
-  .health-legend-dot.red { background:var(--red); }
-  .health-legend-count { margin-left:auto; font-weight:600; }
-
-  /* === AI BOTTOM SECTION === */
-  .ai-bottom-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-top:16px; }
-  .ai-bottom-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; }
-  .ai-bottom-card h4 { font-size:13px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
-  .ai-bottom-card .ai-icon-sm { width:24px; height:24px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:12px; }
-  .takeaway-list, .action-list { display:flex; flex-direction:column; gap:8px; }
-  .takeaway-item, .action-item { display:flex; align-items:flex-start; gap:8px; font-size:12px; line-height:1.5; }
-  .takeaway-item::before { content:"✓"; color:var(--green); font-weight:700; }
-  .action-item::before { content:"→"; color:var(--primary); font-weight:700; }
-
-  /* === KEY METRICS ROW === */
-  .key-metrics-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px; }
-  .key-metric-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; text-align:center; }
-  .key-metric-card .label { font-size:11px; color:var(--text-secondary); margin-bottom:4px; }
-  .key-metric-card .value { font-size:20px; font-weight:700; }
-  .key-metric-card .trend { font-size:11px; margin-top:4px; }
   .filter-bar label { font-size:11px; color:var(--text-dim); font-weight:500; white-space:nowrap; }
   .filter-bar select, .filter-bar input[type=date] { padding:6px 30px 6px 10px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-size:12px; outline:none; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238B8FA3'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 8px center; cursor:pointer; }
   .filter-bar select:focus, .filter-bar input[type=date]:focus { border-color:var(--primary); }
@@ -138,7 +73,7 @@
   .page-header p { color:var(--text-secondary); font-size:14px; }
 
   /* === KPI ROW === */
-  .kpi-row { display:grid; grid-template-columns:repeat(6,1fr); gap:16px; margin-bottom:24px; }
+  .kpi-row { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:24px; }
   .kpi-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; transition:all 0.2s; }
   .kpi-card:hover { background:var(--bg-card-hover); border-color:var(--primary); }
   .kpi-label { font-size:12px; color:var(--text-secondary); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px; }
@@ -245,7 +180,7 @@
 
   /* === RESPONSIVE === */
   @media(max-width:1200px) { .kpi-row { grid-template-columns:repeat(3,1fr); } }
-  @media(max-width:900px) { .dash-grid,.ai-grid { grid-template-columns:1fr; } .kpi-row { grid-template-columns:repeat(2,1fr); } .ai-bottom-grid { grid-template-columns:1fr; } }
+  @media(max-width:900px) { .dash-grid,.ai-grid { grid-template-columns:1fr; } .kpi-row { grid-template-columns:repeat(2,1fr); } }
 </style>
 </head>
 <body>
@@ -282,25 +217,6 @@
     </div>
     <div class="filter-bar" id="filterOverview"></div>
 
-    <!-- Date Quick Tabs -->
-    <div class="date-tabs" id="dateTabs">
-      <button class="date-tab active" onclick="switchDateTab(this,'today')" data-i18n="today">今天</button>
-      <button class="date-tab" onclick="switchDateTab(this,'week')" data-i18n="this_week">本周</button>
-      <button class="date-tab" onclick="switchDateTab(this,'month')" data-i18n="kpi_vs_month">本月</button>
-      <button class="date-tab" onclick="switchDateTab(this,'year')" data-i18n="jan">本年</button>
-      <button class="date-tab" onclick="switchDateTab(this,'campaign')" data-i18n="dash_pnl_title">Campaign View</button>
-    </div>
-
-    <!-- Alert Banner -->
-    <div class="alert-banner" id="alertBanner">
-      <div class="alert-icon">!</div>
-      <div class="alert-content">
-        <div class="alert-title" data-i18n="alert_waste_title">损耗率超标预警</div>
-        <div class="alert-desc" id="alertDesc" data-i18n="alert_waste_desc">Orchard ION 门店今日损耗率达 4.2%，超出安全阈值 2.5%。主要贡献品类：鲜奶 +180%、茶叶包 +95%</div>
-      </div>
-      <button class="alert-action" onclick="showToast(currentLang==='zh'?'已创建异常工单':'Ticket created')" data-i18n="alert_action">立即处理</button>
-    </div>
-
     <!-- KPI ROW -->
     <div class="kpi-row">
       <div class="kpi-card">
@@ -322,22 +238,16 @@
         <div class="kpi-spark"><canvas id="spark3"></canvas></div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label" data-i18n="kpi_iplh">IPLH (人均产出)</div>
-        <div class="kpi-value" style="color:var(--blue)">14.2</div>
-        <div class="kpi-change up">▲ 5.2% <span data-i18n="kpi_vs_wk">vs 上周</span></div>
-        <div class="kpi-spark"><canvas id="spark6"></canvas></div>
+        <div class="kpi-label" data-i18n="kpi_labor">人力成本占比</div>
+        <div class="kpi-value">28.3%</div>
+        <div class="kpi-change down">▼ 0.5% <span data-i18n="kpi_vs_month">vs 上月</span></div>
+        <div class="kpi-spark"><canvas id="spark4"></canvas></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label" data-i18n="kpi_anomaly">AI 异常预警</div>
         <div class="kpi-value" style="color:var(--red)">7</div>
         <div class="kpi-change down">▼ 3 <span data-i18n="kpi_vs_yd">vs 昨日</span></div>
         <div class="kpi-spark"><canvas id="spark5"></canvas></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label" data-i18n="kpi_labor">人力成本占比</div>
-        <div class="kpi-value">28.3%</div>
-        <div class="kpi-change down">▼ 0.5% <span data-i18n="kpi_vs_month">vs 上月</span></div>
-        <div class="kpi-spark"><canvas id="spark4"></canvas></div>
       </div>
     </div>
 
@@ -359,30 +269,7 @@
       </div>
     </div>
 
-    <!-- Top Beverage + Inventory Health -->
-    <div class="dash-grid" style="margin-top:16px;">
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title" data-i18n="chart_top_bev_title">Top Beverage 排行</div><div class="card-subtitle" data-i18n="chart_top_bev_sub">今日销量 Top 8 饮品</div></div>
-          <span class="card-badge green" data-i18n="badge_healthy">健康</span>
-        </div>
-        <div id="topBeverageList" class="bev-list"></div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title" data-i18n="chart_inv_health_title">库存健康度</div><div class="card-subtitle" data-i18n="chart_inv_health_sub">各品类库存状态一览</div></div>
-          <span class="card-badge yellow" data-i18n="badge_watch">关注</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:24px;">
-          <div class="health-donut-wrap"><canvas id="chartInvHealth"></canvas>
-            <div class="health-donut-center"><div class="pct" id="invHealthPct">78%</div><div class="label" data-i18n="inv_in_stock">In Stock</div></div>
-          </div>
-          <div class="health-legend" style="flex:1;" id="invHealthLegend"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="dash-grid three" style="margin-top:16px;">
+    <div class="dash-grid three">
       <div class="card">
         <div class="card-header">
           <div><div class="card-title" data-i18n="chart_insight_title">AI 洞察摘要</div><div class="card-subtitle" data-i18n="chart_insight_sub">今日系统自动生成的经营建议</div></div>
@@ -437,35 +324,7 @@
         <div class="card-header">
           <div><div class="card-title" data-i18n="dash_waste_title">损耗分类</div><div class="card-subtitle" data-i18n="dash_waste_sub">按品类损耗占比</div></div>
         </div>
-        <div class="chart-wrap" style="position:relative;"><canvas id="chartWaste"></canvas>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;">
-            <div id="wasteAmount" style="font-size:20px;font-weight:700;color:var(--red);">¥3.8万</div>
-            <div style="font-size:11px;color:var(--text-dim);" data-i18n="dash_waste_total">本月损耗总额</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- INVENTORY FAST MOVERS -->
-    <div class="card" style="margin-bottom:16px;">
-      <div class="card-header">
-        <div><div class="card-title" data-i18n="chart_fast_movers_title">Inventory Fast Movers</div><div class="card-subtitle" data-i18n="chart_fast_movers_sub">高周转物料库存监控（低库存天数高亮）</div></div>
-        <span class="card-badge red" data-i18n="badge_abnormal">需补货</span>
-      </div>
-      <div style="overflow-x:auto;">
-        <table class="fast-movers-table" id="fastMoversTable">
-          <thead>
-            <tr>
-              <th data-i18n="col_sku">SKU</th>
-              <th data-i18n="col_category">品类</th>
-              <th data-i18n="col_daily_usage">日均用量</th>
-              <th data-i18n="col_current_stock">当前库存</th>
-              <th data-i18n="col_stock_days">库存天数</th>
-              <th data-i18n="col_status">状态</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        <div class="chart-wrap"><canvas id="chartWaste"></canvas></div>
       </div>
     </div>
 
@@ -621,39 +480,6 @@
         </div>
       </div>
     </div>
-
-    <!-- AI Bottom: Key Takeaways + Recommended Actions -->
-    <div class="ai-bottom-grid" id="aiBottomSection">
-      <div class="ai-bottom-card">
-        <h4><span class="ai-icon-sm" style="background:var(--blue-bg);color:var(--blue);">📋</span> <span data-i18n="ai_key_takeaways">Key Takeaways</span></h4>
-        <div class="takeaway-list" id="takeawayList"></div>
-      </div>
-      <div class="ai-bottom-card">
-        <h4><span class="ai-icon-sm" style="background:var(--green-bg);color:var(--green);">🎯</span> <span data-i18n="ai_recommended_actions">Recommended Actions</span></h4>
-        <div class="action-list" id="actionList"></div>
-      </div>
-      <div class="ai-bottom-card">
-        <h4><span class="ai-icon-sm" style="background:var(--yellow-bg);color:var(--yellow);">⚡</span> <span data-i18n="ai_key_metrics">Key Metrics</span></h4>
-        <div style="display:flex;flex-direction:column;gap:10px;" id="aiKeyMetrics">
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:12px;color:var(--text-secondary);" data-i18n="pnl_profit">净利润</span>
-            <span style="font-size:14px;font-weight:600;color:var(--green);" id="aiMetricProfit">¥18.2万</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:12px;color:var(--text-secondary);" data-i18n="pnl_waste">损耗</span>
-            <span style="font-size:14px;font-weight:600;color:var(--red);" id="aiMetricWaste">3.8%</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
-            <span style="font-size:12px;color:var(--text-secondary);" data-i18n="kpi_iplh">IPLH</span>
-            <span style="font-size:14px;font-weight:600;color:var(--blue);" id="aiMetricIPLH">14.2</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
-            <span style="font-size:12px;color:var(--text-secondary);" data-i18n="kpi_nps">NPS</span>
-            <span style="font-size:14px;font-weight:600;color:var(--primary);" id="aiMetricNPS">72.4</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </main>
 
@@ -683,26 +509,9 @@ const I18N = {
     header_insight: 'AI洞察',
     nav_overview: '总览', nav_dashboards: '业务看板', nav_ai: 'AI决策预测',
     overview_title: '运营总览', overview_updated: '数据更新于 10 分钟前',
-    kpi_gmv: '今日 GMV', kpi_stores: '门店数', kpi_nps: '整体 NPS', kpi_labor: '人力成本占比', kpi_anomaly: 'AI 异常预警', kpi_iplh: 'IPLH (人均产出)',
+    kpi_gmv: '今日 GMV', kpi_stores: '门店数', kpi_nps: '整体 NPS', kpi_labor: '人力成本占比', kpi_anomaly: 'AI 异常预警',
     kpi_stores_new: '本月新增', kpi_vs_wk: 'vs 上周', kpi_vs_month: 'vs 上月', kpi_vs_yd: 'vs 昨日',
     kpi_gmv_vs: 'vs 昨日', kpi_selected_store: '选中门店',
-    alert_waste_title: '损耗率超标预警', alert_waste_desc: 'Orchard ION 门店今日损耗率达 4.2%，超出安全阈值 2.5%。主要贡献品类：鲜奶 +180%、茶叶包 +95%', alert_action: '立即处理',
-    chart_top_bev_title: 'Top Beverage 排行', chart_top_bev_sub: '今日销量 Top 8 饮品',
-    chart_inv_health_title: '库存健康度', chart_inv_health_sub: '各品类库存状态一览',
-    inv_in_stock: 'In Stock', inv_low_stock: 'Low Stock', inv_out_stock: 'Out of Stock',
-    chart_fast_movers_title: 'Inventory Fast Movers', chart_fast_movers_sub: '高周转物料库存监控（低库存天数高亮）',
-    col_sku: 'SKU', col_category: '品类', col_daily_usage: '日均用量', col_current_stock: '当前库存', col_stock_days: '库存天数', col_status: '状态',
-    status_critical: '紧急补货', status_warning: '需关注', status_good: '正常',
-    dash_waste_total: '本月损耗总额',
-    ai_key_takeaways: 'Key Takeaways', ai_recommended_actions: 'Recommended Actions', ai_key_metrics: 'Key Metrics',
-    at_1: '损耗率环比上升 0.8%，鲜奶和茶叶包是主要贡献品类',
-    at_2: '周末高峰人力缺口平均 1.5 人/店，影响出杯效率',
-    at_3: 'IPLH 达标率 78%，新店 Ang Mo Kio 拉低均值',
-    at_4: 'NPS 服务评分连续 3 周下滑，等待时间是核心短板',
-    ac_1: '立即检查 Orchard ION、Jewel Changi 备料SOP执行情况',
-    ac_2: '本周启动"弹性+共享"排班试点，覆盖 3 家高流量门店',
-    ac_3: '加速新店员工培训，目标 2 周内 IPLH 达到区域均值',
-    ac_4: '优化高峰时段出杯流程，推广 ION 预制杯方案',
     badge_normal: '正常', badge_watch: '关注', badge_healthy: '健康', badge_abnormal: '异常', badge_good: '良好', badge_profit: '盈利', badge_7insights: '7条新洞察',
     chart_gmv_title: 'GMV 趋势', chart_gmv_sub: '近30天日销售额（万元）',
     chart_nps_title: '各门店 NPS 排名', chart_nps_sub: 'Top 10 门店',
@@ -805,26 +614,9 @@ const I18N = {
     header_insight: 'AI Insights',
     nav_overview: 'Overview', nav_dashboards: 'Dashboards', nav_ai: 'AI Forecast',
     overview_title: 'Operations Overview', overview_updated: 'Updated 10 min ago',
-    kpi_gmv: 'Today\'s GMV', kpi_stores: 'Stores', kpi_nps: 'Overall NPS', kpi_labor: 'Labor Cost %', kpi_anomaly: 'AI Anomaly Alerts', kpi_iplh: 'IPLH (Per-Capita Output)',
+    kpi_gmv: 'Today\'s GMV', kpi_stores: 'Stores', kpi_nps: 'Overall NPS', kpi_labor: 'Labor Cost %', kpi_anomaly: 'AI Anomaly Alerts',
     kpi_stores_new: 'added this month', kpi_vs_wk: 'vs last week', kpi_vs_month: 'vs last month', kpi_vs_yd: 'vs yesterday',
     kpi_gmv_vs: 'vs yesterday', kpi_selected_store: 'selected store',
-    alert_waste_title: 'Waste Rate Alert', alert_waste_desc: 'Orchard ION waste rate reached 4.2%, exceeding 2.5% threshold. Key contributors: fresh milk +180%, tea packs +95%', alert_action: 'Take Action',
-    chart_top_bev_title: 'Top Beverage Ranking', chart_top_bev_sub: 'Today\'s Top 8 best sellers',
-    chart_inv_health_title: 'Inventory Health', chart_inv_health_sub: 'Category-wise stock status overview',
-    inv_in_stock: 'In Stock', inv_low_stock: 'Low Stock', inv_out_stock: 'Out of Stock',
-    chart_fast_movers_title: 'Inventory Fast Movers', chart_fast_movers_sub: 'High-turnover material monitoring (low stock days highlighted)',
-    col_sku: 'SKU', col_category: 'Category', col_daily_usage: 'Daily Usage', col_current_stock: 'Current Stock', col_stock_days: 'Stock Days', col_status: 'Status',
-    status_critical: 'Reorder Now', status_warning: 'Attention', status_good: 'Normal',
-    dash_waste_total: 'Monthly Waste Total',
-    ai_key_takeaways: 'Key Takeaways', ai_recommended_actions: 'Recommended Actions', ai_key_metrics: 'Key Metrics',
-    at_1: 'Waste rate up 0.8% WoW; fresh milk and tea packs are primary contributors',
-    at_2: 'Weekend peak staffing gap averages 1.5 staff/store, impacting output',
-    at_3: 'IPLH compliance at 78%, new store Ang Mo Kio dragging down average',
-    at_4: 'NPS service score declining 3 consecutive weeks; wait time is core issue',
-    ac_1: 'Immediately inspect Orchard ION & Jewel Changi prep SOP compliance',
-    ac_2: 'Launch "flexible + shared" scheduling pilot this week covering 3 high-traffic stores',
-    ac_3: 'Accelerate new store staff training; target regional avg IPLH within 2 weeks',
-    ac_4: 'Optimize peak-hour workflow and roll out ION pre-pour strategy',
     badge_normal: 'Normal', badge_watch: 'Watch', badge_healthy: 'Healthy', badge_abnormal: 'Alert', badge_good: 'Good', badge_profit: 'Profitable', badge_7insights: '7 New Insights',
     chart_gmv_title: 'GMV Trend', chart_gmv_sub: 'Daily Sales - Last 30 Days (10K CNY)',
     chart_nps_title: 'Store NPS Ranking', chart_nps_sub: 'Top 10 Stores',
@@ -1056,22 +848,13 @@ function updateKPIs() {
   cards[2].querySelector('.kpi-value').textContent = nps.toFixed(1);
   cards[2].querySelector('.kpi-change').className = 'kpi-change '+(npsChg>=0?'up':'down');
   cards[2].querySelector('.kpi-change').textContent = (npsChg>=0?'▲ ':'▼ ')+Math.abs(npsChg).toFixed(1)+' '+t('kpi_vs_wk');
-  // IPLH KPI (card 3)
-  const iplhVal = jitter(14.2 + (isSingle?(rng()>0.5?2:-2):0), 0.08, rng);
-  const iplhChg = jitter(rng()>0.5?5.2:-3.1, 0.3, rng);
-  cards[3].querySelector('.kpi-value').textContent = iplhVal.toFixed(1);
-  cards[3].querySelector('.kpi-value').style.color = iplhChg>=0?'var(--blue)':'var(--red)';
-  cards[3].querySelector('.kpi-change').className = 'kpi-change '+(iplhChg>=0?'up':'down');
-  cards[3].querySelector('.kpi-change').textContent = (iplhChg>=0?'▲ ':'▼ ')+Math.abs(iplhChg).toFixed(1)+'% '+t('kpi_vs_wk');
-  // Anomaly KPI (card 4)
+  cards[3].querySelector('.kpi-value').textContent = labor.toFixed(1)+'%';
+  cards[3].querySelector('.kpi-change').className = 'kpi-change '+(labChg<=0?'down':'up');
+  cards[3].querySelector('.kpi-change').textContent = (labChg<=0?'▼ ':'▲ ')+Math.abs(labChg).toFixed(1)+'% '+t('kpi_vs_month');
   cards[4].querySelector('.kpi-value').textContent = anomalies;
   cards[4].querySelector('.kpi-value').style.color = anomalies>5?'var(--red)':anomalies>2?'var(--yellow)':'var(--green)';
   const anomChg = rng()>0.5?'+'+randInt(rng,1,3):'-'+randInt(rng,1,3);
   cards[4].querySelector('.kpi-change').textContent = anomChg+' '+t('kpi_vs_yd');
-  // Labor Cost (card 5)
-  cards[5].querySelector('.kpi-value').textContent = labor.toFixed(1)+'%';
-  cards[5].querySelector('.kpi-change').className = 'kpi-change '+(labChg<=0?'down':'up');
-  cards[5].querySelector('.kpi-change').textContent = (labChg<=0?'▼ ':'▲ ')+Math.abs(labChg).toFixed(1)+'% '+t('kpi_vs_month');
 
   // Sparklines
   const sr = seededRandom(getFilterSeed()+'spark');
@@ -1080,7 +863,6 @@ function updateKPIs() {
   updateSparkline('spark3', genSpark(nps*1.02, 13, 0.5, sr), npsChg>=0?'#22C55E':'#EAB308');
   updateSparkline('spark4', genSpark(labor*0.95, 13, 0.3, sr), labChg<=0?'#22C55E':'#EF4444');
   updateSparkline('spark5', genSpark(anomalies+3, 13, 1.5, sr), anomalies>5?'#EF4444':'#22C55E');
-  updateSparkline('spark6', genSpark(iplhVal*0.95, 13, 0.8, sr), iplhChg>=0?'#3B82F6':'#EF4444');
 }
 function genSpark(b, n, v, r) { const d=[b]; for(let i=1;i<n;i++) d.push(d[i-1]+(r()-0.48)*v); return d; }
 function updateSparkline(id, data, color) {
@@ -1130,14 +912,9 @@ function updateDashboardCharts() {
   const wds = [t('mon'),t('tue'),t('wed'),t('thu'),t('fri'),t('sat'),t('sun')];
   const iplh = wds.map(()=>randInt(rng,8,20));
   const actual = iplh.map(v=>Math.max(4,v+randInt(rng,-3,2)));
-  const iplhTarget = 16;
   if(allCharts.chartManpower) allCharts.chartManpower.destroy();
   allCharts.chartManpower = new Chart(document.getElementById('chartManpower'), {
-    type:'bar', data:{labels:wds, datasets:[
-      {label:t('iplh'),data:iplh,backgroundColor:'rgba(59,130,246,0.5)',borderRadius:4},
-      {label:t('actual_hours'),data:actual,backgroundColor:'rgba(212,168,85,0.5)',borderRadius:4},
-      {label:'Target IPLH',data:wds.map(()=>iplhTarget),type:'line',borderColor:'#EF4444',borderWidth:2,borderDash:[6,4],pointRadius:0,fill:false}
-    ]},
+    type:'bar', data:{labels:wds, datasets:[{label:t('iplh'),data:iplh,backgroundColor:'rgba(59,130,246,0.5)',borderRadius:4},{label:t('actual_hours'),data:actual,backgroundColor:'rgba(212,168,85,0.5)',borderRadius:4}]},
     options:{...chartDefaults, plugins:{legend:{display:true,position:'bottom',labels:{color:'#8B8FA3',font:{size:11},usePointStyle:true}}}}
   });
   const mpPcts = [randInt(rng,45,58),randInt(rng,22,32),randInt(rng,4,12),randInt(rng,6,12),randInt(rng,1,5)];
@@ -1156,9 +933,6 @@ function updateDashboardCharts() {
     options:{...chartDefaults,plugins:{legend:{display:true,position:'bottom',labels:{color:'#8B8FA3',font:{size:11},usePointStyle:true}}},scales:{...chartDefaults.scales,y1:{position:'right',grid:{display:false},ticks:{color:'#EF4444',font:{size:11},callback:v=>v+'%'}}}}
   });
   const wPcts = [randInt(rng,25,38),randInt(rng,15,26),randInt(rng,10,22),randInt(rng,8,18),randInt(rng,4,12),randInt(rng,2,8)];
-  const wasteTotal = jitter(prof.gmvBase*(isSingle?0.08:1)*0.035, 0.3, rng);
-  const wasteEl = document.getElementById('wasteAmount');
-  if(wasteEl) wasteEl.textContent = '¥'+wasteTotal.toFixed(1)+(currentLang==='zh'?'万':'0K');
   if(allCharts.chartWaste) allCharts.chartWaste.destroy();
   allCharts.chartWaste = new Chart(document.getElementById('chartWaste'), {
     type:'doughnut', data:{labels:[t('fresh_milk'),t('tea_packs'),t('fruits'),t('syrup'),t('packaging'),t('other')], datasets:[{data:wPcts,backgroundColor:['#EF4444','#F97316','#EAB308','#22C55E','#3B82F6','#8B8FA3'],borderWidth:0}]},
@@ -1255,7 +1029,7 @@ function updateAnomalyTable(rng) {
   tbody.innerHTML = html;
 }
 
-function refreshAllData() { updateKPIs(); updateOverviewCharts(); updateDashboardCharts(); updateAICharts(); renderTopBeverage(); renderInvHealth(); renderFastMovers(); renderAIBottom(); }
+function refreshAllData() { updateKPIs(); updateOverviewCharts(); updateDashboardCharts(); updateAICharts(); }
 
 // ===== PAGE NAVIGATION =====
 function switchPage(page) {
@@ -1356,106 +1130,6 @@ function generateInsight() {
   stream.insertBefore(card, stream.firstChild);
   requestAnimationFrame(()=>{ card.style.transition='all 0.4s'; card.style.opacity='1'; card.style.transform='translateY(0)'; });
   showToast(t('new_insight')+': '+t(tpl.titleKey).substring(0,20)+'...');
-}
-
-// ===== DATE TAB SWITCH =====
-let currentPeriod = 'today';
-function switchDateTab(btn, period) {
-  currentPeriod = period;
-  document.querySelectorAll('.date-tab').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
-  refreshAllData();
-}
-
-// ===== TOP BEVERAGE LIST =====
-function renderTopBeverage() {
-  const rng = seededRandom(getFilterSeed()+'bev');
-  const bevs = currentLang === 'zh'
-    ? ['茉莉奶茶','生椰拿铁','杨枝甘露','桂花乌龙','蜜桃乌龙','紫薯拿铁','柠檬红茶','芒果冰沙']
-    : ['Jasmine Milk Tea','Coconut Latte','Mango Pomelo','Osmanthus Oolong','Peach Oolong','Taro Latte','Lemon Black Tea','Mango Smoothie'];
-  const el = document.getElementById('topBeverageList');
-  let html = '';
-  const totalBase = 320 + randInt(rng,50,200);
-  bevs.forEach((name, i) => {
-    const sales = Math.round(totalBase * (1 - i*0.08 + (rng()-0.5)*0.06));
-    const pct = (sales / totalBase * 100).toFixed(1);
-    html += `<div class="bev-item"><div class="bev-rank ${i<3?'top3':'other'}">${i+1}</div><div class="bev-info"><div class="bev-name">${name}</div><div class="bev-sales">${sales} cups</div></div><div class="bev-pct">${pct}%</div></div>`;
-  });
-  el.innerHTML = html;
-}
-
-// ===== INVENTORY HEALTH =====
-function renderInvHealth() {
-  const rng = seededRandom(getFilterSeed()+'invHealth');
-  const inStock = randInt(rng,120,180);
-  const lowStock = randInt(rng,15,35);
-  const outStock = randInt(rng,3,12);
-  const total = inStock + lowStock + outStock;
-  const pct = Math.round(inStock/total*100);
-
-  document.getElementById('invHealthPct').textContent = pct + '%';
-
-  if(allCharts.chartInvHealth) allCharts.chartInvHealth.destroy();
-  allCharts.chartInvHealth = new Chart(document.getElementById('chartInvHealth'), {
-    type:'doughnut',
-    data:{ labels:[t('inv_in_stock'),t('inv_low_stock'),t('inv_out_stock')], datasets:[{data:[inStock,lowStock,outStock],backgroundColor:['#22C55E','#EAB308','#EF4444'],borderWidth:0}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false},tooltip:{enabled:true}}}
-  });
-
-  const legend = document.getElementById('invHealthLegend');
-  legend.innerHTML = `
-    <div class="health-legend-item"><div class="health-legend-dot green"></div><span>${t('inv_in_stock')}</span><span class="health-legend-count">${inStock} SKUs</span></div>
-    <div class="health-legend-item"><div class="health-legend-dot yellow"></div><span>${t('inv_low_stock')}</span><span class="health-legend-count">${lowStock} SKUs</span></div>
-    <div class="health-legend-item"><div class="health-legend-dot red"></div><span>${t('inv_out_stock')}</span><span class="health-legend-count">${outStock} SKUs</span></div>
-  `;
-}
-
-// ===== FAST MOVERS TABLE =====
-function renderFastMovers() {
-  const rng = seededRandom(getFilterSeed()+'fastMovers');
-  const skus = currentLang === 'zh'
-    ? [
-        {sku:'FM-001',cat:'鲜奶',catEn:'Fresh Milk'},{sku:'FM-002',cat:'全脂牛奶',catEn:'Whole Milk'},{sku:'FM-003',cat:'茉莉绿茶包',catEn:'Jasmine Green Tea'},{sku:'FM-004',cat:'椰浆',catEn:'Coconut Cream'},{sku:'FM-005',cat:'芒果原浆',catEn:'Mango Puree'},{sku:'FM-006',cat:'珍珠',catEn:'Tapioca Pearls'},{sku:'FM-007',cat:'柠檬汁',catEn:'Lemon Juice'},{sku:'FM-008',cat:'乌龙茶叶',catEn:'Oolong Tea Leaves'}
-      ]
-    : [
-        {sku:'FM-001',cat:'Fresh Milk',catEn:'Fresh Milk'},{sku:'FM-002',cat:'Whole Milk',catEn:'Whole Milk'},{sku:'FM-003',cat:'Jasmine Green Tea',catEn:'Jasmine Green Tea'},{sku:'FM-004',cat:'Coconut Cream',catEn:'Coconut Cream'},{sku:'FM-005',cat:'Mango Puree',catEn:'Mango Puree'},{sku:'FM-006',cat:'Tapioca Pearls',catEn:'Tapioca Pearls'},{sku:'FM-007',cat:'Lemon Juice',catEn:'Lemon Juice'},{sku:'FM-008',cat:'Oolong Tea Leaves',catEn:'Oolong Tea Leaves'}
-      ];
-  const tbody = document.querySelector('#fastMoversTable tbody');
-  let html = '';
-  skus.forEach(item => {
-    const dailyUsage = randInt(rng, 20, 120);
-    const currentStock = randInt(rng, 20, 500);
-    const days = Math.max(0.5, currentStock / dailyUsage);
-    const status = days < 3 ? 'critical' : days < 7 ? 'warning' : 'good';
-    const statusLabel = t('status_' + status);
-    const cat = currentLang === 'zh' ? item.cat : item.catEn;
-    html += `<tr><td style="font-weight:600;font-family:monospace;">${item.sku}</td><td>${cat}</td><td>${dailyUsage} units</td><td>${currentStock} units</td><td><span class="stock-days ${status}">${days.toFixed(1)}d</span></td><td><span class="stock-days ${status}">${statusLabel}</span></td></tr>`;
-  });
-  tbody.innerHTML = html;
-}
-
-// ===== AI BOTTOM SECTION =====
-function renderAIBottom() {
-  const rng = seededRandom(getFilterSeed()+'aiBottom');
-  const prof = REGION_PROFILES[currentFilter.region];
-  const isSingle = currentFilter.store !== 'all';
-  // Key Takeaways
-  const takeawayEl = document.getElementById('takeawayList');
-  takeawayEl.innerHTML = [1,2,3,4].map(i=>`<div class="takeaway-item">${t('at_'+i)}</div>`).join('');
-  // Recommended Actions
-  const actionEl = document.getElementById('actionList');
-  actionEl.innerHTML = [1,2,3,4].map(i=>`<div class="action-item">${t('ac_'+i)}</div>`).join('');
-  // Key Metrics
-  const scale = isSingle ? 0.08 : 1;
-  const profit = jitter(prof.gmvBase * scale * 0.12, 0.2, rng);
-  const waste = jitter(3.2, 0.15, rng);
-  const iplhVal = jitter(14.2, 0.08, rng);
-  const npsVal = jitter(prof.nps, 0.03, rng);
-  document.getElementById('aiMetricProfit').textContent = '¥' + profit.toFixed(1) + (currentLang==='zh'?'万':'0K');
-  document.getElementById('aiMetricWaste').textContent = waste.toFixed(1) + '%';
-  document.getElementById('aiMetricWaste').style.color = waste > 2.5 ? 'var(--red)' : 'var(--green)';
-  document.getElementById('aiMetricIPLH').textContent = iplhVal.toFixed(1);
-  document.getElementById('aiMetricNPS').textContent = npsVal.toFixed(1);
 }
 
 // ===== INIT =====
