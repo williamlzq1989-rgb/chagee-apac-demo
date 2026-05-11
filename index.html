@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CHAGEE APAC · 门店AI经营助手 Demo</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js?v=20260511"></script>
 <style>
   :root {
     --primary: #D4A855;
@@ -238,6 +238,45 @@
   /* === FULL WIDTH === */
   .full-card { grid-column:1/-1; }
 
+  /* === OPS KPI ROW (Ring + Progress Bar Style) === */
+  .ops-kpi-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+  .ops-kpi-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px 24px; }
+  .ops-kpi-card .ops-title { font-size:13px; font-weight:600; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+  .ops-kpi-card .ops-title .ops-icon { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .ops-kpi-card .ops-title .ops-badge { margin-left:auto; font-size:11px; font-weight:600; padding:3px 8px; border-radius:6px; }
+  .ops-body { display:flex; align-items:center; gap:20px; }
+  .ring-wrap { position:relative; width:100px; height:100px; flex-shrink:0; }
+  .ring-wrap canvas { width:100%!important; height:100%!important; }
+  .ring-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; }
+  .ring-center .ring-val { font-size:20px; font-weight:700; line-height:1.1; }
+  .ring-center .ring-unit { font-size:11px; color:var(--text-secondary); }
+  .ops-legend { flex:1; display:flex; flex-direction:column; gap:6px; }
+  .ops-legend-item { display:flex; align-items:center; gap:8px; font-size:12px; }
+  .ops-legend-dot { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+  .ops-legend-name { flex:1; color:var(--text-secondary); }
+  .ops-legend-val { font-weight:600; }
+  .ops-legend-bar { height:6px; background:var(--border); border-radius:3px; margin-top:4px; overflow:hidden; }
+  .ops-legend-bar-fill { height:100%; border-radius:3px; transition:width 1s ease; }
+
+  /* === PROGRESS BAR STYLE (for IPLH) === */
+  .progress-section { width:100%; }
+  .progress-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .progress-label { font-size:12px; color:var(--text-secondary); }
+  .progress-value { font-size:14px; font-weight:700; }
+  .progress-bar-track { height:10px; background:var(--border); border-radius:5px; overflow:hidden; position:relative; }
+  .progress-bar-track .progress-fill { height:100%; border-radius:5px; transition:width 1s ease; position:relative; }
+  .progress-bar-track .progress-target { position:absolute; top:-2px; width:2px; height:14px; background:var(--red); border-radius:1px; z-index:2; }
+  .progress-meta { display:flex; justify-content:space-between; margin-top:8px; }
+  .progress-meta span { font-size:11px; color:var(--text-dim); }
+  .progress-meta .meta-current { font-weight:600; color:var(--text); }
+
+  /* === STORE RANKING CARDS === */
+  .rank-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:24px; }
+  .rank-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+  .rank-card .card-header { margin-bottom:12px; }
+  .rank-chart-wrap { height:320px; position:relative; }
+  .rank-chart-wrap canvas { width:100%!important; height:100%!important; }
+
   /* === SCROLLBAR === */
   ::-webkit-scrollbar { width:6px; }
   ::-webkit-scrollbar-track { background:transparent; }
@@ -245,7 +284,7 @@
 
   /* === RESPONSIVE === */
   @media(max-width:1200px) { .kpi-row { grid-template-columns:repeat(3,1fr); } }
-  @media(max-width:900px) { .dash-grid,.ai-grid { grid-template-columns:1fr; } .kpi-row { grid-template-columns:repeat(2,1fr); } .ai-bottom-grid { grid-template-columns:1fr; } }
+  @media(max-width:900px) { .dash-grid,.ai-grid,.ops-kpi-row,.rank-grid { grid-template-columns:1fr; } .kpi-row { grid-template-columns:repeat(2,1fr); } .ai-bottom-grid { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -301,61 +340,160 @@
       <button class="alert-action" onclick="showToast(currentLang==='zh'?'已创建异常工单':'Ticket created')" data-i18n="alert_action">立即处理</button>
     </div>
 
-    <!-- KPI ROW -->
-    <div class="kpi-row">
+    <!-- SECTION: 营销核心指标 -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <div style="width:3px;height:18px;background:var(--primary);border-radius:2px;"></div>
+      <span style="font-size:14px;font-weight:600;color:var(--text-secondary);" data-i18n="section_marketing_kpi">门店营销核心指标</span>
+    </div>
+
+    <!-- KPI ROW: 5 Marketing Metrics -->
+    <div class="kpi-row" style="grid-template-columns:repeat(5,1fr);">
       <div class="kpi-card">
-        <div class="kpi-label" data-i18n="kpi_gmv">今日 GMV</div>
-        <div class="kpi-value" style="color:var(--green)">¥128.6万</div>
-        <div class="kpi-change up">▲ 12.3% vs 昨日</div>
+        <div class="kpi-label" data-i18n="kpi_gmv">GMV / Sales</div>
+        <div class="kpi-value" style="color:var(--green)" id="kpiGmvVal">S$ 128,430</div>
+        <div class="kpi-change up" id="kpiGmvChg">▲ 12.3% vs prev 15d</div>
         <div class="kpi-spark"><canvas id="spark1"></canvas></div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label" data-i18n="kpi_stores">门店数</div>
-        <div class="kpi-value">86</div>
-        <div class="kpi-change up">▲ 3 <span data-i18n="kpi_stores_new">本月新增</span></div>
+        <div class="kpi-label" data-i18n="kpi_orders">Orders</div>
+        <div class="kpi-value" id="kpiOrdersVal">5,642</div>
+        <div class="kpi-change up" id="kpiOrdersChg">▲ 8.5% vs prev 15d</div>
         <div class="kpi-spark"><canvas id="spark2"></canvas></div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label" data-i18n="kpi_nps">整体 NPS</div>
-        <div class="kpi-value" style="color:var(--primary)">72.4</div>
-        <div class="kpi-change down">▼ 1.2 <span data-i18n="kpi_vs_wk">vs 上周</span></div>
+        <div class="kpi-label" data-i18n="kpi_aov">Avg Order Value</div>
+        <div class="kpi-value" style="color:var(--primary)" id="kpiAovVal">S$ 22.76</div>
+        <div class="kpi-change up" id="kpiAovChg">▲ 3.5% vs prev 15d</div>
         <div class="kpi-spark"><canvas id="spark3"></canvas></div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label" data-i18n="kpi_iplh">IPLH (人均产出)</div>
-        <div class="kpi-value" style="color:var(--blue)">14.2</div>
-        <div class="kpi-change up">▲ 5.2% <span data-i18n="kpi_vs_wk">vs 上周</span></div>
-        <div class="kpi-spark"><canvas id="spark6"></canvas></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label" data-i18n="kpi_anomaly">AI 异常预警</div>
-        <div class="kpi-value" style="color:var(--red)">7</div>
-        <div class="kpi-change down">▼ 3 <span data-i18n="kpi_vs_yd">vs 昨日</span></div>
-        <div class="kpi-spark"><canvas id="spark5"></canvas></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label" data-i18n="kpi_labor">人力成本占比</div>
-        <div class="kpi-value">28.3%</div>
-        <div class="kpi-change down">▼ 0.5% <span data-i18n="kpi_vs_month">vs 上月</span></div>
+        <div class="kpi-label" data-i18n="kpi_net_sales">Net Sales</div>
+        <div class="kpi-value" style="color:var(--blue)" id="kpiNetSalesVal">S$ 121,320</div>
+        <div class="kpi-change up" id="kpiNetSalesChg">▲ 10.8% vs prev 15d</div>
         <div class="kpi-spark"><canvas id="spark4"></canvas></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label" data-i18n="kpi_gross_margin">Gross Margin %</div>
+        <div class="kpi-value" id="kpiGrossMarginVal">67.8%</div>
+        <div class="kpi-change down" id="kpiGrossMarginChg">▼ 1.2% vs prev 15d</div>
+        <div class="kpi-spark"><canvas id="spark5"></canvas></div>
       </div>
     </div>
 
-    <!-- CHARTS ROW -->
+    <!-- SECTION: 营运参考指标 -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;margin-top:8px;">
+      <div style="width:3px;height:18px;background:var(--blue);border-radius:2px;"></div>
+      <span style="font-size:14px;font-weight:600;color:var(--text-secondary);" data-i18n="section_ops_kpi">营运参考指标</span>
+    </div>
+
+    <!-- OPS KPI ROW: IPLH Progress Bar + Wastage Ring + Inventory Health Ring -->
+    <div class="ops-kpi-row">
+      <!-- IPLH: Progress Bar Style -->
+      <div class="ops-kpi-card">
+        <div class="ops-title">
+          <span class="ops-icon" style="background:var(--blue-bg);color:var(--blue);">⚡</span>
+          <span data-i18n="kpi_iplh">IPLH (Labor Productivity)</span>
+          <span class="ops-badge" style="background:var(--green-bg);color:var(--green);" id="iplhBadge">Healthy</span>
+        </div>
+        <div class="progress-section">
+          <div class="progress-row">
+            <span class="progress-label" data-i18n="iplh_current">Current</span>
+            <span class="progress-value" style="color:var(--blue);" id="kpiIplhVal">27.6</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-fill" id="iplhProgressFill" style="width:0%;background:linear-gradient(90deg,#3B82F6,#60A5FA);"></div>
+            <div class="progress-target" id="iplhTargetLine" style="left:0%;"></div>
+          </div>
+          <div class="progress-meta">
+            <span data-i18n="iplh_target">Target: <strong id="iplhTargetVal">25.0</strong></span>
+            <span class="meta-current" id="iplhChgText">▲ 5.2% vs prev 15d</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wastage: Ring + Category Breakdown -->
+      <div class="ops-kpi-card">
+        <div class="ops-title">
+          <span class="ops-icon" style="background:var(--red-bg);color:var(--red);">🗑</span>
+          <span data-i18n="kpi_wastage">Wastage</span>
+          <span class="ops-badge" id="wastageBadge" style="background:var(--green-bg);color:var(--green);">Normal</span>
+        </div>
+        <div class="ops-body">
+          <div class="ring-wrap">
+            <canvas id="chartWastageRing"></canvas>
+            <div class="ring-center">
+              <div class="ring-val" style="color:var(--red);" id="kpiWastageVal">0.92%</div>
+              <div class="ring-unit" data-i18n="wastage_rate">Wastage Rate</div>
+            </div>
+          </div>
+          <div class="ops-legend" id="wastageLegend"></div>
+        </div>
+      </div>
+
+      <!-- Inventory Health: Ring + Legend -->
+      <div class="ops-kpi-card">
+        <div class="ops-title">
+          <span class="ops-icon" style="background:var(--green-bg);color:var(--green);">📦</span>
+          <span data-i18n="kpi_inv_health">Inventory Health</span>
+          <span class="ops-badge" id="invHealthBadge" style="background:var(--green-bg);color:var(--green);">Good</span>
+        </div>
+        <div class="ops-body">
+          <div class="ring-wrap">
+            <canvas id="chartInvHealthRing"></canvas>
+            <div class="ring-center">
+              <div class="ring-val" style="color:var(--green);" id="kpiInvHealthVal">91%</div>
+              <div class="ring-unit" data-i18n="inv_in_stock_rate">In Stock Rate</div>
+            </div>
+          </div>
+          <div class="ops-legend" id="invHealthOpsLegend"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW: Sales Trend + Daily IPLH -->
     <div class="dash-grid">
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title" data-i18n="chart_gmv_title">GMV 趋势</div><div class="card-subtitle" data-i18n="chart_gmv_sub">近30天日销售额（万元）</div></div>
+          <div><div class="card-title" data-i18n="chart_gmv_title">Sales Trend</div><div class="card-subtitle" data-i18n="chart_gmv_sub">近30天日销售额</div></div>
           <span class="card-badge green" data-i18n="badge_normal">正常</span>
         </div>
         <div class="chart-wrap"><canvas id="chartGmv"></canvas></div>
       </div>
       <div class="card">
         <div class="card-header">
-          <div><div class="card-title" data-i18n="chart_nps_title">各门店 NPS 排名</div><div class="card-subtitle" data-i18n="chart_nps_sub">Top 10 门店</div></div>
+          <div><div class="card-title" data-i18n="chart_iplh_title">Daily IPLH Trend</div><div class="card-subtitle" data-i18n="chart_iplh_sub">近30天人均产出趋势</div></div>
+          <span class="card-badge green" data-i18n="badge_healthy">健康</span>
+        </div>
+        <div class="chart-wrap"><canvas id="chartIplh"></canvas></div>
+      </div>
+    </div>
+
+    <!-- STORE RANKINGS -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;margin-top:8px;">
+      <div style="width:3px;height:18px;background:var(--green);border-radius:2px;"></div>
+      <span style="font-size:14px;font-weight:600;color:var(--text-secondary);" data-i18n="section_store_ranking">门店排名</span>
+    </div>
+    <div class="rank-grid">
+      <div class="rank-card">
+        <div class="card-header">
+          <div><div class="card-title" data-i18n="chart_gmv_rank_title">Store GMV Ranking</div><div class="card-subtitle" data-i18n="chart_gmv_rank_sub">Top 8 Stores by GMV</div></div>
+          <span class="card-badge green" data-i18n="badge_healthy">健康</span>
+        </div>
+        <div class="rank-chart-wrap"><canvas id="chartStoreGmvRank"></canvas></div>
+      </div>
+      <div class="rank-card">
+        <div class="card-header">
+          <div><div class="card-title" data-i18n="chart_order_rank_title">Store Order Ranking</div><div class="card-subtitle" data-i18n="chart_order_rank_sub">Top 8 Stores by Order Count</div></div>
+          <span class="card-badge blue" data-i18n="badge_good">良好</span>
+        </div>
+        <div class="rank-chart-wrap"><canvas id="chartStoreOrderRank"></canvas></div>
+      </div>
+      <div class="rank-card">
+        <div class="card-header">
+          <div><div class="card-title" data-i18n="chart_nps_rank_title">Store NPS Ranking</div><div class="card-subtitle" data-i18n="chart_nps_rank_sub">Top 8 Stores by NPS Score</div></div>
           <span class="card-badge yellow" data-i18n="badge_watch">关注</span>
         </div>
-        <div class="chart-wrap"><canvas id="chartNps"></canvas></div>
+        <div class="rank-chart-wrap"><canvas id="chartStoreNpsRank"></canvas></div>
       </div>
     </div>
 
@@ -683,7 +821,9 @@ const I18N = {
     header_insight: 'AI洞察',
     nav_overview: '总览', nav_dashboards: '业务看板', nav_ai: 'AI决策预测',
     overview_title: '运营总览', overview_updated: '数据更新于 10 分钟前',
-    kpi_gmv: '今日 GMV', kpi_stores: '门店数', kpi_nps: '整体 NPS', kpi_labor: '人力成本占比', kpi_anomaly: 'AI 异常预警', kpi_iplh: 'IPLH (人均产出)',
+    kpi_gmv: 'GMV / 销售额', kpi_orders: '订单数', kpi_aov: '平均客单价', kpi_net_sales: '净销售额', kpi_gross_margin: '毛利率',
+    kpi_iplh: 'IPLH (人效)', kpi_wastage: '损耗率', kpi_inv_health: '库存健康度', kpi_scheduling: '排班与人力',
+    kpi_stores: '门店数', kpi_nps: '整体 NPS', kpi_labor: '人力成本占比', kpi_anomaly: 'AI 异常预警',
     kpi_stores_new: '本月新增', kpi_vs_wk: 'vs 上周', kpi_vs_month: 'vs 上月', kpi_vs_yd: 'vs 昨日',
     kpi_gmv_vs: 'vs 昨日', kpi_selected_store: '选中门店',
     alert_waste_title: '损耗率超标预警', alert_waste_desc: 'Orchard ION 门店今日损耗率达 4.2%，超出安全阈值 2.5%。主要贡献品类：鲜奶 +180%、茶叶包 +95%', alert_action: '立即处理',
@@ -704,8 +844,16 @@ const I18N = {
     ac_3: '加速新店员工培训，目标 2 周内 IPLH 达到区域均值',
     ac_4: '优化高峰时段出杯流程，推广 ION 预制杯方案',
     badge_normal: '正常', badge_watch: '关注', badge_healthy: '健康', badge_abnormal: '异常', badge_good: '良好', badge_profit: '盈利', badge_7insights: '7条新洞察',
-    chart_gmv_title: 'GMV 趋势', chart_gmv_sub: '近30天日销售额（万元）',
+    chart_gmv_title: 'GMV 趋势', chart_gmv_sub: '近30天日销售额',
+    chart_iplh_title: 'Daily IPLH Trend', chart_iplh_sub: '近30天人均产出趋势',
+    chart_gmv_rank_title: 'Store GMV Ranking', chart_gmv_rank_sub: 'Top 8 Stores by GMV',
+    chart_order_rank_title: 'Store Order Ranking', chart_order_rank_sub: 'Top 8 Stores by Order Count',
+    chart_nps_rank_title: 'Store NPS Ranking', chart_nps_rank_sub: 'Top 8 Stores by NPS Score',
     chart_nps_title: '各门店 NPS 排名', chart_nps_sub: 'Top 10 门店',
+    section_marketing_kpi: '门店营销核心指标', section_ops_kpi: '营运参考指标', section_store_ranking: '门店排名',
+    iplh_current: '当前值', iplh_target: '目标: ', wastage_rate: '损耗率', inv_in_stock_rate: '在库率',
+    wastage_fresh_milk: '鲜奶', wastage_tea: '茶叶', wastage_fruits: '水果', wastage_other: '其他',
+    badge_normal_status: '正常', badge_watch_status: '关注', badge_good_status: '良好',
     chart_insight_title: 'AI 洞察摘要', chart_insight_sub: '今日系统自动生成的经营建议',
     chart_health_title: '六大领域健康度', chart_health_sub: '综合评分（满分100）',
     dash_title: '业务看板', dash_sub: '六大业务领域 + P&L损益看板',
@@ -805,7 +953,9 @@ const I18N = {
     header_insight: 'AI Insights',
     nav_overview: 'Overview', nav_dashboards: 'Dashboards', nav_ai: 'AI Forecast',
     overview_title: 'Operations Overview', overview_updated: 'Updated 10 min ago',
-    kpi_gmv: 'Today\'s GMV', kpi_stores: 'Stores', kpi_nps: 'Overall NPS', kpi_labor: 'Labor Cost %', kpi_anomaly: 'AI Anomaly Alerts', kpi_iplh: 'IPLH (Per-Capita Output)',
+    kpi_gmv: 'GMV / Sales', kpi_orders: 'Orders', kpi_aov: 'Avg Order Value', kpi_net_sales: 'Net Sales', kpi_gross_margin: 'Gross Margin %',
+    kpi_iplh: 'IPLH (Labor Productivity)', kpi_wastage: 'Wastage', kpi_inv_health: 'Inventory Health', kpi_scheduling: 'Scheduling & Labor',
+    kpi_stores: '门店数', kpi_nps: '整体 NPS', kpi_labor: '人力成本占比', kpi_anomaly: 'AI 异常预警',
     kpi_stores_new: 'added this month', kpi_vs_wk: 'vs last week', kpi_vs_month: 'vs last month', kpi_vs_yd: 'vs yesterday',
     kpi_gmv_vs: 'vs yesterday', kpi_selected_store: 'selected store',
     alert_waste_title: 'Waste Rate Alert', alert_waste_desc: 'Orchard ION waste rate reached 4.2%, exceeding 2.5% threshold. Key contributors: fresh milk +180%, tea packs +95%', alert_action: 'Take Action',
@@ -826,9 +976,16 @@ const I18N = {
     ac_3: 'Accelerate new store staff training; target regional avg IPLH within 2 weeks',
     ac_4: 'Optimize peak-hour workflow and roll out ION pre-pour strategy',
     badge_normal: 'Normal', badge_watch: 'Watch', badge_healthy: 'Healthy', badge_abnormal: 'Alert', badge_good: 'Good', badge_profit: 'Profitable', badge_7insights: '7 New Insights',
-    chart_gmv_title: 'GMV Trend', chart_gmv_sub: 'Daily Sales - Last 30 Days (10K CNY)',
-    chart_nps_title: 'Store NPS Ranking', chart_nps_sub: 'Top 10 Stores',
+    chart_gmv_title: 'Sales Trend', chart_gmv_sub: 'Daily Sales - Last 30 Days',
+    chart_iplh_title: 'Daily IPLH Trend', chart_iplh_sub: 'Daily IPLH - Last 30 Days',
+    chart_gmv_rank_title: 'Store GMV Ranking', chart_gmv_rank_sub: 'Top 8 Stores by GMV',
+    chart_order_rank_title: 'Store Order Ranking', chart_order_rank_sub: 'Top 8 Stores by Order Count',
+    chart_nps_rank_title: 'Store NPS Ranking', chart_nps_rank_sub: 'Top 8 Stores by NPS Score',
     chart_insight_title: 'AI Insight Summary', chart_insight_sub: 'Auto-generated operational recommendations',
+    section_marketing_kpi: 'Marketing Key Metrics', section_ops_kpi: 'Operations Reference', section_store_ranking: 'Store Rankings',
+    iplh_current: 'Current', iplh_target: 'Target: ', wastage_rate: 'Wastage Rate', inv_in_stock_rate: 'In Stock Rate',
+    wastage_fresh_milk: 'Fresh Milk', wastage_tea: 'Tea', wastage_fruits: 'Fruits', wastage_other: 'Other',
+    badge_normal_status: 'Normal', badge_watch_status: 'Watch', badge_good_status: 'Good',
     chart_health_title: 'Domain Health Score', chart_health_sub: 'Composite Score (max 100)',
     dash_title: 'Business Dashboards', dash_sub: 'Six Domains + P&L Dashboard',
     dash_labor_title: 'Manpower', dash_labor_sub: 'IPLH / Overtime Rate / Labor Cost',
@@ -1037,56 +1194,71 @@ function updateKPIs() {
   const prof = REGION_PROFILES[currentFilter.region];
   const isSingle = currentFilter.store !== 'all';
   const mult = isSingle ? STORE_MULT.gmv : 1;
-  const gmv = isSingle ? jitter(prof.gmvBase * mult, 0.15, rng) : jitter(prof.gmvBase, 0.1, rng);
-  const stores = isSingle ? 1 : randInt(rng, Math.max(1, prof.storeCount-2), prof.storeCount+2);
-  const nps = jitter(prof.nps + (isSingle ? (rng()>0.5?5:-5) : 0), 0.05, rng);
-  const labor = jitter(prof.laborCost + (isSingle ? (rng()-0.5)*6 : 0), 0.04, rng);
-  const anomalies = randInt(rng, Math.max(0, prof.anomalies-2), prof.anomalies+3);
+  // Top KPIs (5)
+  const gmvBase = isSingle ? jitter(prof.gmvBase * mult * 1000, 0.15, rng) : jitter(prof.gmvBase * 1000, 0.1, rng);
+  const gmv = Math.round(gmvBase);
+  const orders = isSingle ? randInt(rng, 350, 650) : randInt(rng, 4500, 7200);
+  const aov = +(gmv / orders).toFixed(2);
+  const netSales = Math.round(gmv * jitter(0.945, 0.02, rng));
+  const grossMargin = jitter(67.8 + (isSingle?(rng()-0.5)*8:0), 0.03, rng);
+  // Changes
   const gmvChg = jitter(8+rng()*10, 0.3, rng);
-  const npsChg = jitter(rng()>0.5?1.5:-1.5, 0.3, rng);
-  const labChg = jitter(rng()>0.5?-0.5:0.5, 0.4, rng);
+  const ordChg = jitter(5+rng()*8, 0.3, rng);
+  const aovChg = jitter(rng()>0.5?3.5:-2.1, 0.3, rng);
+  const nsChg = jitter(6+rng()*8, 0.3, rng);
+  const gmChg = jitter(rng()>0.5?1.2:-1.2, 0.3, rng);
+  const vsText = currentLang==='zh' ? 'vs prev 15d' : 'vs prev 15d';
 
-  const cards = document.querySelectorAll('.kpi-card');
-  cards[0].querySelector('.kpi-value').textContent = '¥'+gmv.toFixed(1)+(currentLang==='zh'?'万':'0K');
-  cards[0].querySelector('.kpi-value').style.color = gmvChg>=0?'var(--green)':'var(--red)';
-  cards[0].querySelector('.kpi-change').className = 'kpi-change '+(gmvChg>=0?'up':'down');
-  cards[0].querySelector('.kpi-change').textContent = (gmvChg>=0?'▲ ':'▼ ')+Math.abs(gmvChg).toFixed(1)+'% '+t('kpi_gmv_vs');
-  cards[1].querySelector('.kpi-value').textContent = stores;
-  cards[1].querySelector('.kpi-change').textContent = '▲ '+(isSingle?'1':randInt(rng,0,5))+' '+(isSingle?t('kpi_selected_store'):t('kpi_stores_new'));
-  cards[2].querySelector('.kpi-value').textContent = nps.toFixed(1);
-  cards[2].querySelector('.kpi-change').className = 'kpi-change '+(npsChg>=0?'up':'down');
-  cards[2].querySelector('.kpi-change').textContent = (npsChg>=0?'▲ ':'▼ ')+Math.abs(npsChg).toFixed(1)+' '+t('kpi_vs_wk');
-  // IPLH KPI (card 3)
-  const iplhVal = jitter(14.2 + (isSingle?(rng()>0.5?2:-2):0), 0.08, rng);
-  const iplhChg = jitter(rng()>0.5?5.2:-3.1, 0.3, rng);
-  cards[3].querySelector('.kpi-value').textContent = iplhVal.toFixed(1);
-  cards[3].querySelector('.kpi-value').style.color = iplhChg>=0?'var(--blue)':'var(--red)';
-  cards[3].querySelector('.kpi-change').className = 'kpi-change '+(iplhChg>=0?'up':'down');
-  cards[3].querySelector('.kpi-change').textContent = (iplhChg>=0?'▲ ':'▼ ')+Math.abs(iplhChg).toFixed(1)+'% '+t('kpi_vs_wk');
-  // Anomaly KPI (card 4)
-  cards[4].querySelector('.kpi-value').textContent = anomalies;
-  cards[4].querySelector('.kpi-value').style.color = anomalies>5?'var(--red)':anomalies>2?'var(--yellow)':'var(--green)';
-  const anomChg = rng()>0.5?'+'+randInt(rng,1,3):'-'+randInt(rng,1,3);
-  cards[4].querySelector('.kpi-change').textContent = anomChg+' '+t('kpi_vs_yd');
-  // Labor Cost (card 5)
-  cards[5].querySelector('.kpi-value').textContent = labor.toFixed(1)+'%';
-  cards[5].querySelector('.kpi-change').className = 'kpi-change '+(labChg<=0?'down':'up');
-  cards[5].querySelector('.kpi-change').textContent = (labChg<=0?'▼ ':'▲ ')+Math.abs(labChg).toFixed(1)+'% '+t('kpi_vs_month');
+  const setKPI = (id, val) => { const el = document.getElementById(id); if(!el) return; el.textContent = val; };
+  const setChg = (id, chg) => {
+    const el = document.getElementById(id); if(!el) return;
+    const up = chg >= 0;
+    el.className = 'kpi-change ' + (up ? 'up' : 'down');
+    el.textContent = (up?'▲ ':'▼ ') + Math.abs(chg).toFixed(1) + '% ' + vsText;
+  };
 
-  // Sparklines
+  setKPI('kpiGmvVal', 'S$ ' + gmv.toLocaleString()); setChg('kpiGmvChg', gmvChg);
+  setKPI('kpiOrdersVal', orders.toLocaleString()); setChg('kpiOrdersChg', ordChg);
+  setKPI('kpiAovVal', 'S$ ' + aov.toFixed(2)); setChg('kpiAovChg', aovChg);
+  setKPI('kpiNetSalesVal', 'S$ ' + netSales.toLocaleString()); setChg('kpiNetSalesChg', nsChg);
+  setKPI('kpiGrossMarginVal', grossMargin.toFixed(1) + '%'); setChg('kpiGrossMarginChg', gmChg);
+
+  // Update sparklines (blue style like reference)
   const sr = seededRandom(getFilterSeed()+'spark');
-  updateSparkline('spark1', genSpark(gmv*0.8, 13, 0.8, sr), gmvChg>=0?'#22C55E':'#EF4444');
-  updateSparkline('spark2', genSpark(stores*0.85, 13, 0.5, sr), '#3B82F6');
-  updateSparkline('spark3', genSpark(nps*1.02, 13, 0.5, sr), npsChg>=0?'#22C55E':'#EAB308');
-  updateSparkline('spark4', genSpark(labor*0.95, 13, 0.3, sr), labChg<=0?'#22C55E':'#EF4444');
-  updateSparkline('spark5', genSpark(anomalies+3, 13, 1.5, sr), anomalies>5?'#EF4444':'#22C55E');
-  updateSparkline('spark6', genSpark(iplhVal*0.95, 13, 0.8, sr), iplhChg>=0?'#3B82F6':'#EF4444');
+  updateSparkline('spark1', genSpark(gmv*0.8, 13, gmv*0.02, sr), '#3B82F6');
+  updateSparkline('spark2', genSpark(orders*0.85, 13, orders*0.03, sr), '#3B82F6');
+  updateSparkline('spark3', genSpark(aov*0.95, 13, aov*0.02, sr), '#3B82F6');
+  updateSparkline('spark4', genSpark(netSales*0.8, 13, netSales*0.02, sr), '#3B82F6');
+  updateSparkline('spark5', genSpark(grossMargin*0.9, 13, grossMargin*0.01, sr), '#3B82F6');
+
+  // === Ops KPIs ===
+  const iplhVal = jitter(27.6 + (isSingle?(rng()>0.5?3:-3):0), 0.08, rng);
+  const iplhTarget = 25.0;
+  const iplhPct = Math.min(100, (iplhVal / (iplhTarget * 1.3)) * 100);
+  const iplhChg = jitter(rng()>0.5?5.2:-3.1, 0.3, rng);
+  setKPI('kpiIplhVal', iplhVal.toFixed(1));
+  document.getElementById('iplhProgressFill').style.width = iplhPct + '%';
+  document.getElementById('iplhTargetLine').style.left = ((iplhTarget / (iplhTarget * 1.3)) * 100) + '%';
+  const iplhBadge = document.getElementById('iplhBadge');
+  if(iplhVal >= iplhTarget) {
+    iplhBadge.textContent = currentLang==='zh'?'健康':'Healthy'; iplhBadge.style.background='var(--green-bg)'; iplhBadge.style.color='var(--green)';
+  } else {
+    iplhBadge.textContent = currentLang==='zh'?'偏低':'Low'; iplhBadge.style.background='var(--yellow-bg)'; iplhBadge.style.color='var(--yellow)';
+  }
+  document.getElementById('iplhChgText').textContent = (iplhChg>=0?'▲ ':'▼ ') + Math.abs(iplhChg).toFixed(1) + '% ' + vsText;
+  document.getElementById('iplhChgText').style.color = iplhChg>=0?'var(--green)':'var(--red)';
+
+  // Wastage Ring
+  updateWastageRing(rng);
+
+  // Inventory Health Ring
+  updateInvHealthRing(rng);
 }
 function genSpark(b, n, v, r) { const d=[b]; for(let i=1;i<n;i++) d.push(d[i-1]+(r()-0.48)*v); return d; }
 function updateSparkline(id, data, color) {
   if(allCharts[id]) allCharts[id].destroy();
   allCharts[id] = new Chart(document.getElementById(id), {
-    type:'line', data:{labels:data.map((_,i)=>i),datasets:[{data,borderColor:color,borderWidth:1.5,pointRadius:0,fill:false,tension:0.4}]},
+    type:'line', data:{labels:data.map((_,i)=>i),datasets:[{data,borderColor:color,borderWidth:1.5,pointRadius:0,fill:{target:'origin',above:color+'18'},tension:0.4}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}}}
   });
 }
@@ -1102,14 +1274,14 @@ function updateOverviewCharts() {
   if(allCharts.chartGmv) allCharts.chartGmv.destroy();
   allCharts.chartGmv = new Chart(document.getElementById('chartGmv'), {
     type:'line', data:{labels, datasets:[{data:gmvData, borderColor:'#D4A855', borderWidth:2, pointRadius:0, fill:{target:'origin',above:'rgba(212,168,85,0.08)'}, tension:0.4}]},
-    options:{...chartDefaults, scales:{...chartDefaults.scales, y:{...chartDefaults.scales.y, ticks:{...chartDefaults.scales.y.ticks, callback:v=>v+(currentLang==='zh'?'万':'K')}}}}
+    options:{...chartDefaults, scales:{...chartDefaults.scales}}
   });
-  const storeNames = isSingle ? [currentFilter.store.split('(')[0].trim()] : REGIONS[currentFilter.region].stores.slice(0,10).map(s=>s.replace(/\s*\(.*\)/,''));
-  const npsData = storeNames.map(()=> jitter(prof.nps+(rng()-0.5)*16, 0.03, rng));
-  if(allCharts.chartNps) allCharts.chartNps.destroy();
-  allCharts.chartNps = new Chart(document.getElementById('chartNps'), {
-    type:'bar', data:{labels:storeNames, datasets:[{data:npsData.map(v=>+v.toFixed(0)), backgroundColor:ctx=>ctx.raw>=75?'rgba(34,197,94,0.6)':ctx.raw>=70?'rgba(234,179,8,0.6)':'rgba(239,68,68,0.6)', borderRadius:4}]},
-    options:{...chartDefaults, indexAxis:'y', scales:{...chartDefaults.scales, x:{...chartDefaults.scales.x, min:50, max:90}}}
+  // IPLH Trend
+  const iplhData = Array.from({length:days},(_,i)=> jitter(27.6*scale*10, 0.08, rng));
+  if(allCharts.chartIplh) allCharts.chartIplh.destroy();
+  allCharts.chartIplh = new Chart(document.getElementById('chartIplh'), {
+    type:'line', data:{labels, datasets:[{data:iplhData, borderColor:'#3B82F6', borderWidth:2, pointRadius:0, fill:{target:'origin',above:'rgba(59,130,246,0.08)'}, tension:0.4}]},
+    options:{...chartDefaults, scales:{...chartDefaults.scales}}
   });
   const radarThis = [t('manpower'),t('inventory'),t('nps_r'),t('cs'),t('audit'),t('pnl')].map(()=>randInt(rng,60,92));
   const radarLast = radarThis.map(v=>Math.max(50,v+randInt(rng,-8,8)));
@@ -1255,16 +1427,177 @@ function updateAnomalyTable(rng) {
   tbody.innerHTML = html;
 }
 
-function refreshAllData() { updateKPIs(); updateOverviewCharts(); updateDashboardCharts(); updateAICharts(); renderTopBeverage(); renderInvHealth(); renderFastMovers(); renderAIBottom(); }
+// ===== WASTAGE RING CHART =====
+function updateWastageRing(rng) {
+  const wastage = jitter(0.92 + (currentFilter.store !== 'all' ? (rng()-0.5)*0.6 : 0), 0.1, rng);
+  const cats = [
+    { key: 'wastage_fresh_milk', pct: randInt(rng, 28, 42), color: '#EF4444' },
+    { key: 'wastage_tea', pct: randInt(rng, 18, 30), color: '#F97316' },
+    { key: 'wastage_fruits', pct: randInt(rng, 12, 22), color: '#EAB308' },
+    { key: 'wastage_other', pct: 0, color: '#5A5E72' }
+  ];
+  const used = cats.slice(0,3).reduce((s,c)=>s+c.pct, 0);
+  cats[3].pct = 100 - used;
+
+  document.getElementById('kpiWastageVal').textContent = wastage.toFixed(2) + '%';
+  const wBadge = document.getElementById('wastageBadge');
+  if(wastage <= 1.5) {
+    wBadge.textContent = currentLang==='zh'?'正常':'Normal'; wBadge.style.background='var(--green-bg)'; wBadge.style.color='var(--green)';
+  } else if(wastage <= 2.5) {
+    wBadge.textContent = currentLang==='zh'?'关注':'Watch'; wBadge.style.background='var(--yellow-bg)'; wBadge.style.color='var(--yellow)';
+  } else {
+    wBadge.textContent = currentLang==='zh'?'异常':'Alert'; wBadge.style.background='var(--red-bg)'; wBadge.style.color='var(--red)';
+  }
+
+  if(allCharts.chartWastageRing) allCharts.chartWastageRing.destroy();
+  allCharts.chartWastageRing = new Chart(document.getElementById('chartWastageRing'), {
+    type:'doughnut',
+    data:{ labels:cats.map(c=>t(c.key)), datasets:[{data:cats.map(c=>c.pct), backgroundColor:cats.map(c=>c.color), borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'75%',plugins:{legend:{display:false},tooltip:{enabled:true}},animation:{animateRotate:true}}
+  });
+
+  const legend = document.getElementById('wastageLegend');
+  legend.innerHTML = cats.map(c => `
+    <div class="ops-legend-item">
+      <div class="ops-legend-dot" style="background:${c.color};"></div>
+      <span class="ops-legend-name">${t(c.key)}</span>
+      <span class="ops-legend-val">${c.pct}%</span>
+    </div>
+  `).join('');
+}
+
+// ===== INVENTORY HEALTH RING CHART =====
+function updateInvHealthRing(rng) {
+  const inStock = randInt(rng, 120, 180);
+  const lowStock = randInt(rng, 15, 35);
+  const outStock = randInt(rng, 3, 12);
+  const total = inStock + lowStock + outStock;
+  const pct = Math.round(inStock / total * 100);
+
+  document.getElementById('kpiInvHealthVal').textContent = pct + '%';
+  const hBadge = document.getElementById('invHealthBadge');
+  if(pct >= 85) {
+    hBadge.textContent = currentLang==='zh'?'良好':'Good'; hBadge.style.background='var(--green-bg)'; hBadge.style.color='var(--green)';
+  } else if(pct >= 70) {
+    hBadge.textContent = currentLang==='zh'?'关注':'Watch'; hBadge.style.background='var(--yellow-bg)'; hBadge.style.color='var(--yellow)';
+  } else {
+    hBadge.textContent = currentLang==='zh'?'异常':'Alert'; hBadge.style.background='var(--red-bg)'; hBadge.style.color='var(--red)';
+  }
+
+  if(allCharts.chartInvHealthRing) allCharts.chartInvHealthRing.destroy();
+  allCharts.chartInvHealthRing = new Chart(document.getElementById('chartInvHealthRing'), {
+    type:'doughnut',
+    data:{ labels:[t('inv_in_stock'),t('inv_low_stock'),t('inv_out_stock')], datasets:[{data:[inStock,lowStock,outStock], backgroundColor:['#22C55E','#EAB308','#EF4444'], borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'75%',plugins:{legend:{display:false},tooltip:{enabled:true}},animation:{animateRotate:true}}
+  });
+
+  const legend = document.getElementById('invHealthOpsLegend');
+  legend.innerHTML = [
+    {label:t('inv_in_stock'), val:inStock, color:'#22C55E'},
+    {label:t('inv_low_stock'), val:lowStock, color:'#EAB308'},
+    {label:t('inv_out_stock'), val:outStock, color:'#EF4444'}
+  ].map(c => `
+    <div class="ops-legend-item">
+      <div class="ops-legend-dot" style="background:${c.color};"></div>
+      <span class="ops-legend-name">${c.label}</span>
+      <span class="ops-legend-val">${c.val} SKUs</span>
+    </div>
+  `).join('');
+}
+
+// ===== STORE RANKING CHARTS =====
+function renderStoreRankings() {
+  const rng = seededRandom(getFilterSeed()+'storeRank');
+  const storeList = currentFilter.store !== 'all'
+    ? [currentFilter.store.replace(/\s*\(.*\)/,'')]
+    : REGIONS[currentFilter.region].stores.slice(0,8).map(s=>s.replace(/\s*\(.*\)/,''));
+
+  const makeChart = (canvasId, pairs, colorFn, xOpts, yOpts) => {
+    if(allCharts[canvasId]) allCharts[canvasId].destroy();
+    pairs.sort((a,b)=>b.value-a.value);
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    allCharts[canvasId] = new Chart(ctx, {
+      type: 'bar',
+      indexAxis: 'y',
+      data: {
+        labels: pairs.map(p => p.store),
+        datasets: [{
+          data: pairs.map(p => p.value),
+          backgroundColor: pairs.map(p => colorFn(p.value)),
+          borderRadius: 4,
+          barThickness: 22,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { right: 4 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(26,29,39,0.95)',
+            titleColor: '#E8E8ED',
+            bodyColor: '#C9CDD4',
+            borderColor: 'rgba(42,46,58,0.8)',
+            borderWidth: 1,
+            cornerRadius: 8,
+            padding: 10
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(42,46,58,0.3)', drawBorder: false },
+            border: { display: false },
+            ticks: { color: '#8B8FA3', font: { size: 10 }, ...xOpts },
+            beginAtZero: true
+          },
+          y: {
+            grid: { display: false, drawBorder: false },
+            border: { display: false },
+            ticks: {
+              color: '#C9CDD4',
+              font: { size: 11, family: '-apple-system, BlinkMacSystemFont, sans-serif' },
+              padding: 4,
+              crossAlign: 'far',
+              ...yOpts
+            }
+          }
+        }
+      }
+    });
+  };
+
+  // GMV Ranking - gold gradient colors
+  let gmvPairs = storeList.map(s => ({store:s, value:Math.round(jitter(28000,0.4,rng))}));
+  makeChart('chartStoreGmvRank', gmvPairs,
+    v => v>=32000 ? 'rgba(212,168,85,0.9)' : v>=24000 ? 'rgba(212,168,85,0.6)' : 'rgba(212,168,85,0.35)',
+    { callback: v => 'S$' + (v/1000).toFixed(0) + 'K' });
+
+  // Order Ranking - blue colors
+  let orderPairs = storeList.map(s => ({store:s, value:randInt(rng,800,3500)}));
+  makeChart('chartStoreOrderRank', orderPairs,
+    v => v>=2500 ? 'rgba(59,130,246,0.85)' : v>=1500 ? 'rgba(59,130,246,0.55)' : 'rgba(59,130,246,0.3)',
+    { callback: v => v.toLocaleString() });
+
+  // NPS Ranking - green/yellow/red by value
+  let npsPairs = storeList.map(s => ({store:s, value:randInt(rng,55,88)}));
+  makeChart('chartStoreNpsRank', npsPairs,
+    v => v>=75 ? 'rgba(34,197,94,0.8)' : v>=65 ? 'rgba(234,179,8,0.75)' : 'rgba(239,68,68,0.75)',
+    {},
+    { callback: v => v + '分' });
+}
+
+function refreshAllData() { updateKPIs(); updateOverviewCharts(); renderTopBeverage(); renderInvHealth(); renderFastMovers(); renderAIBottom(); renderStoreRankings(); }
 
 // ===== PAGE NAVIGATION =====
 function switchPage(page) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
-  event.target.classList.add('active');
-  if(page==='dashboards') updateDashboardCharts();
-  if(page==='ai') updateAICharts();
+  if(event && event.target) event.target.classList.add('active');
+  if(page==='dashboards') setTimeout(()=>{ updateDashboardCharts(); renderFastMovers(); }, 80);
+  if(page==='ai') setTimeout(()=>{ updateAICharts(); renderAIBottom(); }, 80);
 }
 
 // ===== TOAST =====
